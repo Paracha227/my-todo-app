@@ -2,208 +2,187 @@
 <html lang="th" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ระบบจัดการงานและแจ้งเตือน</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
+        tailwind.config = { darkMode: 'class' }
     </script>
     <!-- FontAwesome & Google Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * { -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Sarabun', sans-serif; }
-        .glass-card {
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        .glass-header {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-12 transition-colors duration-300">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-24 transition-colors duration-300">
 
-    <!-- Notification Alert Banner -->
-    <div id="notif-banner" class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white px-4 py-3 text-sm font-medium hidden flex justify-between items-center shadow-lg">
-        <div class="flex items-center space-x-3">
-            <div class="bg-white/20 p-2 rounded-xl">
-                <i class="fas fa-bell text-white text-lg animate-bounce"></i>
+    <!-- Notification Banner -->
+    <div id="notif-banner" class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white px-4 py-3 text-xs font-medium flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-2.5">
+            <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
+                <i class="fas fa-bell text-white text-sm animate-bounce"></i>
             </div>
-            <span>เปิดใช้งานการแจ้งเตือนบนเบราว์เซอร์ เพื่อไม่ให้พลาดกำหนดส่งงานสำคัญ!</span>
+            <span>เปิดรับแจ้งเตือน เพื่อให้เด้งเข้าศูนย์แจ้งเตือนตอนล็อกหน้าจอ!</span>
         </div>
-        <div class="flex items-center space-x-2">
-            <button onclick="requestNotificationPermission()" class="bg-white text-amber-700 px-4 py-1.5 rounded-xl text-xs font-bold hover:bg-amber-50 shadow-md transition">เปิดการแจ้งเตือน</button>
-            <button onclick="closeBanner()" class="text-white/80 hover:text-white p-1"><i class="fas fa-times text-lg"></i></button>
-        </div>
+        <button onclick="requestNotificationPermission()" class="bg-white text-amber-800 px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm active:scale-95 transition shrink-0">เปิดใช้งาน</button>
     </div>
 
-    <div class="max-w-5xl mx-auto px-4 py-8">
-        <!-- Top Bar / Header -->
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/60 dark:border-slate-800 glass-card transition-all">
-            <div class="flex items-center space-x-4">
-                <div class="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-                    <i class="fas fa-calendar-check text-2xl"></i>
+    <div class="max-w-md md:max-w-3xl mx-auto px-4 pt-4">
+
+        <!-- Header Bar -->
+        <header class="flex items-center justify-between mb-5 bg-white/80 dark:bg-slate-900/80 p-4 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 glass-header sticky top-3 z-30">
+            <div class="flex items-center space-x-3">
+                <div class="w-11 h-11 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-md shadow-blue-500/30 shrink-0">
+                    <i class="fas fa-check-double text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
-                        <span>ระบบจัดการงานและแจ้งเตือน</span>
-                        <span class="text-xs px-2.5 py-1 bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 rounded-full font-semibold">Pro</span>
-                    </h1>
-                    <p class="text-sm text-slate-500 dark:text-slate-400">วางแผนงานประจำวัน และติดตามงานที่ได้รับมอบหมาย</p>
+                    <h1 class="text-lg font-bold text-slate-800 dark:text-white leading-tight">จัดการงาน & เตือน</h1>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">แจ้งเตือนตรงเวลานัดหมาย</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-3">
-                <!-- Theme Switcher Button -->
-                <button onclick="toggleTheme()" id="theme-btn" class="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition font-medium text-sm shadow-sm">
-                    <i id="theme-icon" class="fas fa-moon text-indigo-500"></i>
-                    <span id="theme-text">โหมดมืด</span>
+
+            <div class="flex items-center space-x-2">
+                <button onclick="testNotificationIn5Sec()" class="w-10 h-10 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center active:scale-90 transition" title="ทดสอบเตือน 5 วินาที">
+                    <i class="fas fa-stopwatch text-base"></i>
                 </button>
-                
-                <button onclick="openModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-5 py-2.5 rounded-2xl shadow-lg shadow-blue-500/25 transition flex items-center space-x-2">
-                    <i class="fas fa-plus-circle text-lg"></i>
-                    <span>เพิ่มงานใหม่</span>
+                <button onclick="toggleTheme()" class="w-10 h-10 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center active:scale-90 transition">
+                    <i id="theme-icon" class="fas fa-moon text-base"></i>
                 </button>
             </div>
         </header>
 
-        <!-- Stats Dashboard Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-lg shadow-slate-100 dark:shadow-none transition">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">งานทั้งหมด</span>
-                    <div class="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                        <i class="fas fa-tasks text-lg"></i>
+        <!-- Stats Cards Grid -->
+        <div class="grid grid-cols-2 gap-3 mb-5">
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">งานทั้งหมด</span>
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xs">
+                        <i class="fas fa-list-check"></i>
                     </div>
                 </div>
-                <div class="text-3xl font-extrabold text-slate-800 dark:text-white" id="stat-total">0</div>
+                <div class="text-2xl font-extrabold text-slate-800 dark:text-white" id="stat-total">0</div>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-lg shadow-slate-100 dark:shadow-none transition">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider text-amber-500">รอดำเนินการ</span>
-                    <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 flex items-center justify-center text-amber-500">
-                        <i class="fas fa-hourglass-half text-lg animate-spin" style="animation-duration: 8s;"></i>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-amber-500">รอดำเนินการ</span>
+                    <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center text-amber-500 text-xs">
+                        <i class="fas fa-clock"></i>
                     </div>
                 </div>
-                <div class="text-3xl font-extrabold text-slate-800 dark:text-white" id="stat-pending">0</div>
+                <div class="text-2xl font-extrabold text-slate-800 dark:text-white" id="stat-pending">0</div>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-lg shadow-slate-100 dark:shadow-none transition">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">เสร็จสิ้นแล้ว</span>
-                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-500">
-                        <i class="fas fa-check-circle text-lg"></i>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-500">เสร็จสิ้นแล้ว</span>
+                    <div class="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-500 text-xs">
+                        <i class="fas fa-check-circle"></i>
                     </div>
                 </div>
-                <div class="text-3xl font-extrabold text-slate-800 dark:text-white" id="stat-completed">0</div>
+                <div class="text-2xl font-extrabold text-slate-800 dark:text-white" id="stat-completed">0</div>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-lg shadow-slate-100 dark:shadow-none transition">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider text-rose-500">เกินกำหนด</span>
-                    <div class="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/50 flex items-center justify-center text-rose-500">
-                        <i class="fas fa-exclamation-triangle text-lg"></i>
+            <div class="bg-white dark:bg-slate-900 p-4 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-rose-500">เกินกำหนด</span>
+                    <div class="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/60 flex items-center justify-center text-rose-500 text-xs">
+                        <i class="fas fa-exclamation-circle"></i>
                     </div>
                 </div>
-                <div class="text-3xl font-extrabold text-slate-800 dark:text-white" id="stat-overdue">0</div>
+                <div class="text-2xl font-extrabold text-slate-800 dark:text-white" id="stat-overdue">0</div>
+            </div>
+        </div>
+
+        <!-- Search Bar & Filters -->
+        <div class="space-y-3 mb-5">
+            <div class="relative">
+                <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                <input type="text" id="search-input" oninput="renderTasks()" placeholder="ค้นหางาน..." class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition shadow-sm">
+            </div>
+
+            <!-- Swipeable Filter Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                <button onclick="setFilter('repeat', 'all')" id="btn-rep-all" class="pill-btn active px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-blue-600 text-white shadow-sm transition">ทั้งหมด</button>
+                <button onclick="setFilter('repeat', 'daily')" id="btn-rep-daily" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">🔄 ซ้ำทุกวัน</button>
+                <button onclick="setFilter('repeat', 'weekdays')" id="btn-rep-weekdays" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">💼 จ.-ศ.</button>
+                <button onclick="setFilter('repeat', 'monthly')" id="btn-rep-monthly" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">🗓️ ทุกเดือน</button>
+                <button onclick="setFilter('repeat', 'once')" id="btn-rep-once" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">📅 ครั้งเดียว</button>
             </div>
         </div>
 
         <!-- Task List Area -->
-        <main class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/60 dark:border-slate-800 overflow-hidden transition">
-            <!-- Filter Bar -->
-            <div class="p-4 md:p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row gap-3">
-                <div class="relative flex-1">
-                    <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                    <input type="text" id="search-input" oninput="renderTasks()" placeholder="ค้นหารายการงาน..." class="w-full pl-11 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="flex gap-2">
-                    <select id="filter-repeat" onchange="renderTasks()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 focus:outline-none">
-                        <option value="all">🔄 รูปแบบงานทั้งหมด</option>
-                        <option value="daily">🔄 ทำซ้ำทุกวัน</option>
-                        <option value="once">📅 ทำครั้งเดียว</option>
-                    </select>
-                    <select id="filter-status" onchange="renderTasks()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 focus:outline-none">
-                        <option value="all">📌 สถานะทั้งหมด</option>
-                        <option value="pending">⏳ รอดำเนินการ</option>
-                        <option value="completed">✅ เสร็จสิ้น</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Task Items Container -->
-            <div id="task-list" class="divide-y divide-slate-100 dark:divide-slate-800">
-                <!-- Task items rendered here -->
-            </div>
+        <main class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 overflow-hidden mb-6">
+            <div id="task-list" class="divide-y divide-slate-100 dark:divide-slate-800"></div>
         </main>
     </div>
 
+    <!-- Mobile Floating Add Button -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button onclick="openModal()" class="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-600 text-white rounded-full shadow-xl shadow-blue-600/40 flex items-center justify-center text-xl active:scale-90 transition">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
     <!-- Modal Form -->
-    <div id="task-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md hidden items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2" id="modal-title">
-                    <i class="fas fa-edit text-blue-600"></i>
-                    <span>เพิ่มงานใหม่</span>
-                </h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fas fa-times text-lg"></i></button>
+    <div id="task-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition">
+            <div class="flex justify-between items-center mb-5">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/80 flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm">
+                        <i class="fas fa-pen"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white" id="modal-title">เพิ่มงานใหม่</h3>
+                </div>
+                <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full bg-slate-100 dark:bg-slate-800"><i class="fas fa-times text-sm"></i></button>
             </div>
 
-            <form id="task-form" onsubmit="saveTask(event)">
+            <form id="task-form" onsubmit="saveTask(event)" class="space-y-4">
                 <input type="hidden" id="task-id">
                 
-                <div class="space-y-4">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">ชื่องาน / รายการที่ต้องทำ</label>
+                    <input type="text" id="task-title" required placeholder="เช่น บันทึกสวัสดิการ แบบ 7105" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">ลิงก์ระบบงาน (ถ้ามี)</label>
+                    <input type="url" id="task-link" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <i class="fas fa-pen text-blue-500"></i> ชื่อชื่องาน / รายการที่ต้องทำ
-                        </label>
-                        <input type="text" id="task-title" required placeholder="เช่น บันทึกสวัสดิการ แบบ 7105" class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">รูปแบบงาน</label>
+                        <select id="task-repeat" onchange="toggleDateInput()" class="w-full px-3 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
+                            <option value="daily">🔄 ทำซ้ำทุกวัน</option>
+                            <option value="weekdays">💼 จันทร์ - ศุกร์</option>
+                            <option value="monthly">🗓️ ทุกเดือน (ตามวันที่กำหนด)</option>
+                            <option value="once">📅 ทำครั้งเดียว</option>
+                        </select>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <i class="fas fa-link text-indigo-500"></i> ลิงก์ระบบงาน (ถ้ามี เช่น แบบ 7105)
-                        </label>
-                        <input type="url" id="task-link" placeholder="https://..." class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                <i class="fas fa-sync-alt text-purple-500"></i> รูปแบบงาน
-                            </label>
-                            <select id="task-repeat" onchange="toggleDateInput()" class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
-                                <option value="daily">🔄 ทำซ้ำทุกวัน (Daily)</option>
-                                <option value="once">📅 ทำครั้งเดียว (Specific Date)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                                <i class="fas fa-clock text-amber-500"></i> เวลาแจ้งเตือน
-                            </label>
-                            <input type="time" id="task-time" required class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
-                        </div>
-                    </div>
-
-                    <div id="date-container" class="hidden">
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <i class="fas fa-calendar-alt text-rose-500"></i> วันที่กำหนดส่ง
-                        </label>
-                        <input type="date" id="task-date" class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                            <i class="fas fa-align-left text-emerald-500"></i> รายละเอียดเพิ่มเติม
-                        </label>
-                        <textarea id="task-desc" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติม..." class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none"></textarea>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">เวลาแจ้งเตือน</label>
+                        <input type="time" id="task-time" required class="w-full px-3 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
                     </div>
                 </div>
 
-                <div class="mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="closeModal()" class="px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition">ยกเลิก</button>
-                    <button type="submit" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-sm hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 transition">บันทึกข้อมูล</button>
+                <div id="date-container" class="hidden">
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">วันที่กำหนดส่ง / วันที่ทำซ้ำประจำเดือน</label>
+                    <input type="date" id="task-date" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
+                </div>
+
+                <div class="pt-2 flex gap-3">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-sm active:scale-95 transition">ยกเลิก</button>
+                    <button type="submit" class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-sm shadow-lg shadow-blue-500/25 active:scale-95 transition">บันทึกงาน</button>
                 </div>
             </form>
         </div>
@@ -212,65 +191,37 @@
     <script>
         let tasks = JSON.parse(localStorage.getItem('my_tasks') || '[]');
         let swRegistration = null;
+        let activeRepeatFilter = 'all';
 
-        // ----------------------------------------------------
-        // 1. Service Worker Registration (สำหรับศูนย์แจ้งเตือน)
-        // ----------------------------------------------------
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(reg => {
-                        console.log('Service Worker Registered Successfully!', reg);
-                        swRegistration = reg;
-                    })
-                    .catch(err => console.error('Service Worker Registration Failed:', err));
+                    .then(reg => { swRegistration = reg; })
+                    .catch(err => console.error('SW Error:', err));
             });
         }
 
-        // Theme Switcher Logic
-        function applyTheme(isDark) {
-            const html = document.documentElement;
-            const icon = document.getElementById('theme-icon');
-            const text = document.getElementById('theme-text');
-            
-            if (isDark) {
-                html.classList.add('dark');
-                icon.className = 'fas fa-sun text-amber-400';
-                text.innerText = 'โหมดสว่าง';
-                localStorage.setItem('app_theme', 'dark');
-            } else {
-                html.classList.remove('dark');
-                icon.className = 'fas fa-moon text-indigo-500';
-                text.innerText = 'โหมดมืด';
-                localStorage.setItem('app_theme', 'light');
+        function setFilter(type, val) {
+            activeRepeatFilter = val;
+            document.querySelectorAll('.pill-btn').forEach(b => {
+                b.className = 'pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition';
+            });
+            const activeBtn = document.getElementById(`btn-rep-${val}`);
+            if (activeBtn) {
+                activeBtn.className = 'pill-btn active px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-blue-600 text-white shadow-sm transition';
             }
+            renderTasks();
+        }
+
+        function applyTheme(isDark) {
+            document.documentElement.classList.toggle('dark', isDark);
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.className = isDark ? 'fas fa-sun text-amber-400' : 'fas fa-moon text-slate-600';
+            localStorage.setItem('app_theme', isDark ? 'dark' : 'light');
         }
 
         function toggleTheme() {
-            const isCurrentlyDark = document.documentElement.classList.contains('dark');
-            applyTheme(!isCurrentlyDark);
-        }
-
-        function initTheme() {
-            const savedTheme = localStorage.getItem('app_theme');
-            if (savedTheme === 'dark') {
-                applyTheme(true);
-            } else {
-                applyTheme(false);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            checkNotificationStatus();
-            renderTasks();
-            setInterval(checkTaskReminders, 30000); // ตรวจสอบทุกๆ 30 วินาที
-        });
-
-        function checkNotificationStatus() {
-            if ("Notification" in window && Notification.permission !== "granted") {
-                document.getElementById('notif-banner').classList.remove('hidden');
-            }
+            applyTheme(!document.documentElement.classList.contains('dark'));
         }
 
         function requestNotificationPermission() {
@@ -278,29 +229,43 @@
                 Notification.requestPermission().then(permission => {
                     if (permission === "granted") {
                         document.getElementById('notif-banner').classList.add('hidden');
-                        sendBrowserNotification({
-                            title: 'เปิดการแจ้งเตือนสำเร็จ!',
-                            desc: 'ระบบจะส่งการแจ้งเตือนเข้าศูนย์การแจ้งเตือนมือถือเมื่อถึงเวลา'
-                        });
+                        sendNotificationNow("พร้อมแจ้งเตือนแล้ว!", "ระบบจะส่งป๊อปอัพเข้า Notification Center เมื่อถึงเวลานัดหมาย");
                     }
                 });
             }
         }
 
-        function closeBanner() {
-            document.getElementById('notif-banner').classList.add('hidden');
+        function testNotificationIn5Sec() {
+            if (Notification.permission !== "granted") {
+                alert("กดปุ่ม 'เปิดใช้งาน' บนแถบแจ้งเตือนด้านบนก่อนครับ");
+                return;
+            }
+            alert("กำลังนับถอยหลัง 5 วินาที... โปรดกดล็อคหน้าจอมือถือทันทีเพื่อทดสอบ!");
+            setTimeout(() => {
+                sendNotificationNow("🔔 แจ้งเตือนทดสอบสำเร็จ!", "ป๊อปอัพเด้งเข้า Notification Center ตอนล็อกหน้าจอเรียบร้อยแล้วครับ");
+            }, 5000);
+        }
+
+        function sendNotificationNow(title, body) {
+            if (swRegistration && swRegistration.active) {
+                swRegistration.active.postMessage({
+                    type: 'SCHEDULE_NOTIF',
+                    title: title,
+                    body: body,
+                    tag: 'notif-' + Date.now()
+                });
+            } else if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(title, {
+                    body: body,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/3112/3112933.png'
+                });
+            }
         }
 
         function toggleDateInput() {
             const repeat = document.getElementById('task-repeat').value;
-            const dateContainer = document.getElementById('date-container');
-            if (repeat === 'once') {
-                dateContainer.classList.remove('hidden');
-                document.getElementById('task-date').required = true;
-            } else {
-                dateContainer.classList.add('hidden');
-                document.getElementById('task-date').required = false;
-            }
+            // แสดงช่องเลือกวันที่ทั้งแบบ 'once' และแบบ 'monthly'
+            document.getElementById('date-container').classList.toggle('hidden', repeat === 'daily' || repeat === 'weekdays');
         }
 
         function openModal(taskId = null) {
@@ -318,7 +283,6 @@
                     document.getElementById('task-repeat').value = task.repeat || 'once';
                     document.getElementById('task-time').value = task.time;
                     document.getElementById('task-date').value = task.date || '';
-                    document.getElementById('task-desc').value = task.desc || '';
                     document.getElementById('modal-title').innerText = 'แก้ไขงาน';
                     toggleDateInput();
                 }
@@ -340,11 +304,14 @@
             const link = document.getElementById('task-link').value;
             const repeat = document.getElementById('task-repeat').value;
             const time = document.getElementById('task-time').value;
-            const date = repeat === 'once' ? document.getElementById('task-date').value : new Date().toISOString().split('T')[0];
-            const desc = document.getElementById('task-desc').value;
+            let date = document.getElementById('task-date').value;
+
+            if (repeat === 'daily' || repeat === 'weekdays') {
+                date = new Date().toISOString().split('T')[0];
+            }
 
             const existingIndex = tasks.findIndex(t => t.id === id);
-            const taskData = { id, title, link, repeat, time, date, desc, completed: false, notified: false };
+            const taskData = { id, title, link, repeat, time, date, completed: false, notified: false };
 
             if (existingIndex > -1) {
                 tasks[existingIndex] = { ...tasks[existingIndex], ...taskData };
@@ -360,16 +327,31 @@
         function toggleComplete(id) {
             const task = tasks.find(t => t.id === id);
             if (task) {
+                const now = new Date();
+                
                 if (task.repeat === 'daily') {
-                    const tomorrow = new Date();
-                    tomorrow.setDate(tomorrow.getDate() + 1);
-                    task.date = tomorrow.toISOString().split('T')[0];
-                    task.notified = false;
-                    task.completed = false;
-                    alert("🎉 เก่งมาก! ทำงานประจำวันนี้เรียบร้อยแล้ว ระบบจะตั้งเตือนสำหรับวันพรุ่งนี้ให้อัตโนมัติครับ");
+                    now.setDate(now.getDate() + 1);
+                    task.date = now.toISOString().split('T')[0];
+                } else if (task.repeat === 'weekdays') {
+                    // ถ้าทำวันศุกร์ ขยับไปวันจันทร์
+                    const day = now.getDay();
+                    const addDays = (day === 5) ? 3 : (day === 6) ? 2 : 1;
+                    now.setDate(now.getDate() + addDays);
+                    task.date = now.toISOString().split('T')[0];
+                } else if (task.repeat === 'monthly') {
+                    // ขยับไปเดือนถัดไป วันเดิม
+                    now.setMonth(now.getMonth() + 1);
+                    task.date = now.toISOString().split('T')[0];
                 } else {
                     task.completed = !task.completed;
                 }
+
+                if (task.repeat !== 'once') {
+                    task.notified = false;
+                    task.completed = false;
+                    alert("🎉 บันทึกงานเรียบร้อย! ระบบตั้งเตือนในรอบถัดไปให้อัตโนมัติครับ");
+                }
+
                 localStorage.setItem('my_tasks', JSON.stringify(tasks));
                 renderTasks();
             }
@@ -383,18 +365,22 @@
             }
         }
 
+        function getRepeatBadge(repeat) {
+            switch(repeat) {
+                case 'daily': return '<span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300">🔄 ทุกวัน</span>';
+                case 'weekdays': return '<span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300">💼 จ.-ศ.</span>';
+                case 'monthly': return '<span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">🗓️ ทุกเดือน</span>';
+                default: return '<span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">📅 ครั้งเดียว</span>';
+            }
+        }
+
         function renderTasks() {
             const search = document.getElementById('search-input').value.toLowerCase();
-            const repeatFilter = document.getElementById('filter-repeat').value;
-            const statusFilter = document.getElementById('filter-status').value;
 
             const filtered = tasks.filter(t => {
                 const matchSearch = t.title.toLowerCase().includes(search);
-                const matchRepeat = repeatFilter === 'all' || t.repeat === repeatFilter;
-                const matchStatus = statusFilter === 'all' || 
-                                    (statusFilter === 'completed' && t.completed) ||
-                                    (statusFilter === 'pending' && !t.completed);
-                return matchSearch && matchRepeat && matchStatus;
+                const matchRepeat = activeRepeatFilter === 'all' || t.repeat === activeRepeatFilter;
+                return matchSearch && matchRepeat;
             });
 
             document.getElementById('stat-total').innerText = tasks.length;
@@ -406,55 +392,66 @@
 
             const listEl = document.getElementById('task-list');
             if (filtered.length === 0) {
-                listEl.innerHTML = `<div class="p-12 text-center text-slate-400 font-medium">
-                    <i class="fas fa-clipboard-list text-4xl mb-3 text-slate-300 dark:text-slate-700"></i>
-                    <p>ไม่พบรายการงานที่คุณค้นหา</p>
-                </div>`;
+                listEl.innerHTML = `
+                    <div class="p-10 text-center text-slate-400">
+                        <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3 text-slate-300 dark:text-slate-600">
+                            <i class="fas fa-inbox text-xl"></i>
+                        </div>
+                        <p class="text-xs font-medium">ยังไม่มีรายการงานที่คุณค้นหา</p>
+                    </div>`;
                 return;
             }
 
             listEl.innerHTML = filtered.map(t => `
-                <div class="p-5 flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
-                    <div class="flex items-start space-x-4">
-                        <button onclick="toggleComplete('${t.id}')" class="mt-1 text-slate-300 dark:text-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition">
-                            <i class="fas ${t.completed ? 'fa-check-circle text-emerald-500 dark:text-emerald-400' : 'fa-circle'} text-2xl"></i>
+                <div class="p-4 flex items-center justify-between active:bg-slate-50 dark:active:bg-slate-800/50 transition">
+                    <div class="flex items-start space-x-3 min-w-0 pr-2">
+                        <button onclick="toggleComplete('${t.id}')" class="mt-0.5 text-slate-300 dark:text-slate-700 hover:text-emerald-500 transition shrink-0">
+                            <i class="fas ${t.completed ? 'fa-check-circle text-emerald-500' : 'fa-circle'} text-xl"></i>
                         </button>
-                        <div>
-                            <div class="flex items-center space-x-2">
-                                <h4 class="font-bold text-slate-800 dark:text-white text-base ${t.completed ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${t.title}</h4>
-                                <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1 ${t.repeat === 'daily' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300'}">
-                                    <i class="fas ${t.repeat === 'daily' ? 'fa-sync-alt' : 'fa-calendar'} text-[10px]"></i>
-                                    ${t.repeat === 'daily' ? 'ทำซ้ำทุกวัน' : 'ครั้งเดียว'}
-                                </span>
+                        <div class="min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <h4 class="font-bold text-slate-800 dark:text-white text-sm truncate ${t.completed ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${t.title}</h4>
+                                ${getRepeatBadge(t.repeat)}
                             </div>
-                            ${t.desc ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${t.desc}</p>` : ''}
-                            <div class="flex flex-wrap items-center gap-4 mt-2.5 text-xs text-slate-400 dark:text-slate-500">
-                                <span class="flex items-center font-medium text-slate-600 dark:text-slate-400"><i class="far fa-clock mr-1.5 text-amber-500"></i>${t.time} น.</span>
-                                ${t.repeat === 'once' ? `<span class="flex items-center"><i class="far fa-calendar-alt mr-1.5 text-blue-500"></i>${t.date}</span>` : ''}
-                                ${t.link ? `<a href="${t.link}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center font-semibold bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1 rounded-lg"><i class="fas fa-external-link-alt mr-1.5"></i>เปิดระบบงาน</a>` : ''}
+                            <div class="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
+                                <span class="font-semibold text-slate-600 dark:text-slate-400"><i class="far fa-clock text-amber-500 mr-1"></i>${t.time} น.</span>
+                                ${(t.repeat === 'once' || t.repeat === 'monthly') ? `<span><i class="far fa-calendar text-blue-500 mr-1"></i>${t.date}</span>` : ''}
+                                ${t.link ? `<a href="${t.link}" target="_blank" class="text-blue-600 dark:text-blue-400 font-bold underline flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i>เปิดระบบ</a>` : ''}
                             </div>
                         </div>
                     </div>
-                    <div class="flex space-x-1">
-                        <button onclick="openModal('${t.id}')" class="w-9 h-9 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition" title="แก้ไข"><i class="fas fa-pen"></i></button>
-                        <button onclick="deleteTask('${t.id}')" class="w-9 h-9 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition" title="ลบ"><i class="fas fa-trash-alt"></i></button>
+                    <div class="flex items-center space-x-1 shrink-0">
+                        <button onclick="openModal('${t.id}')" class="w-8 h-8 rounded-xl text-slate-400 hover:text-blue-600 flex items-center justify-center"><i class="fas fa-pen text-xs"></i></button>
+                        <button onclick="deleteTask('${t.id}')" class="w-8 h-8 rounded-xl text-slate-400 hover:text-rose-600 flex items-center justify-center"><i class="fas fa-trash-alt text-xs"></i></button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // ----------------------------------------------------
-        // 2. ระบบส่ง Notification เข้า Mobile Notification Center
-        // ----------------------------------------------------
         function checkTaskReminders() {
             const now = new Date();
             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             const currentDate = now.toISOString().split('T')[0];
+            const currentDay = now.getDay(); // 0 = Sun, 1-5 = Mon-Fri, 6 = Sat
 
             tasks.forEach(task => {
                 if (!task.completed && task.time === currentTime && !task.notified) {
-                    if (task.repeat === 'daily' || task.date === currentDate) {
-                        sendBrowserNotification(task);
+                    let shouldNotify = false;
+
+                    if (task.repeat === 'daily') {
+                        shouldNotify = true;
+                    } else if (task.repeat === 'weekdays' && currentDay >= 1 && currentDay <= 5) {
+                        shouldNotify = true;
+                    } else if (task.repeat === 'monthly') {
+                        const taskDay = task.date ? task.date.split('-')[2] : '';
+                        const todayDay = String(now.getDate()).padStart(2, '0');
+                        if (taskDay === todayDay) shouldNotify = true;
+                    } else if (task.repeat === 'once' && task.date === currentDate) {
+                        shouldNotify = true;
+                    }
+
+                    if (shouldNotify) {
+                        sendNotificationNow(`🔔 ถึงเวลาทำงาน: ${task.title}`, `กำหนดเวลา ${task.time} น.`);
                         task.notified = true;
                         localStorage.setItem('my_tasks', JSON.stringify(tasks));
                     }
@@ -462,26 +459,14 @@
             });
         }
 
-        function sendBrowserNotification(task) {
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme(localStorage.getItem('app_theme') === 'dark');
+            renderTasks();
+            setInterval(checkTaskReminders, 25000);
             if ("Notification" in window && Notification.permission === "granted") {
-                const title = task.title ? `🔔 ถึงเวลาทำงาน: ${task.title}` : '🔔 การแจ้งเตือนระบบ';
-                const options = {
-                    body: task.desc || (task.time ? `กำหนดเวลา ${task.time} น.` : ''),
-                    icon: 'https://cdn-icons-png.flaticon.com/512/3112/3112933.png',
-                    badge: 'https://cdn-icons-png.flaticon.com/512/3112/3112933.png',
-                    vibrate: [200, 100, 200],
-                    tag: task.id || Date.now().toString(),
-                    renotify: true
-                };
-
-                // ส่งเข้าศูนย์แจ้งเตือนผ่าน Service Worker
-                if (swRegistration && swRegistration.showNotification) {
-                    swRegistration.showNotification(title, options);
-                } else {
-                    new Notification(title, options);
-                }
+                document.getElementById('notif-banner').classList.add('hidden');
             }
-        }
+        });
     </script>
 </body>
 </html>
