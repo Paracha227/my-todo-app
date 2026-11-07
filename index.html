@@ -449,6 +449,26 @@
                 });
             }
         }
+        // ลงทะเบียน Service Worker สำหรับการแจ้งเตือนเบื้องหลัง
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker Registered!', reg))
+        .catch(err => console.error('Service Worker Error', err));
+}
+
+// ฟังก์ชันส่งแจ้งเตือนผ่าน Service Worker เข้า Notification Center
+function sendBrowserNotification(task) {
+    if ("Notification" in window && Notification.permission === "granted") {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.showNotification(`🔔 ถึงเวลาทำงาน: ${task.title}`, {
+                body: task.desc || `กำหนดเวลา ${task.time} น.`,
+                icon: 'https://cdn-icons-png.flaticon.com/512/3112/3112933.png',
+                vibrate: [200, 100, 200],
+                tag: task.id
+            });
+        });
+    }
+}
     </script>
 </body>
 </html>
