@@ -1,802 +1,387 @@
 <!DOCTYPE html>
-<html lang="th" class="light">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการและแจ้งเตือนงาน (Task & Reminder App)</title>
-    <!-- Tailwind CSS CDN -->
+    <title>ระบบแจ้งเตือนและจัดการงาน</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                        }
-                    },
-                    fontFamily: {
-                        kanit: ['Kanit', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts: Kanit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.05);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(100,100,100,0.3);
-            border-radius: 3px;
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Sarabun', sans-serif; }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 min-h-screen transition-colors duration-200">
+<body class="bg-slate-100 min-h-screen pb-12">
 
-    <!-- Notification Alert Banner for Permission -->
-    <div id="notifPermissionBanner" class="hidden bg-amber-500 text-white px-4 py-2 text-center text-sm flex items-center justify-between shadow-md">
-        <div class="flex items-center space-x-2 mx-auto">
-            <i class="fa-solid fa-bell-slash text-lg"></i>
+    <!-- Notification Banner -->
+    <div id="notif-banner" class="bg-amber-500 text-white px-4 py-2 text-sm font-medium hidden flex justify-between items-center shadow-md">
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-bell animate-bounce"></i>
             <span>เปิดใช้งานการแจ้งเตือนบนเบราว์เซอร์ เพื่อไม่ให้พลาดกำหนดส่งงานสำคัญ!</span>
-            <button onclick="requestNotificationPermission()" class="ml-4 bg-white text-amber-600 px-3 py-1 rounded-md text-xs font-semibold hover:bg-amber-100 transition">
-                เปิดการแจ้งเตือน
-            </button>
         </div>
-        <button onclick="dismissNotifBanner()" class="text-white hover:text-gray-200"><i class="fa-solid fa-xmark"></i></button>
+        <div class="flex items-center space-x-2">
+            <button onclick="requestNotificationPermission()" class="bg-white text-amber-600 px-3 py-1 rounded-lg text-xs font-bold hover:bg-amber-50 transition">เปิดการแจ้งเตือน</button>
+            <button onclick="closeBanner()" class="text-white hover:text-amber-200"><i class="fas fa-times"></i></button>
+        </div>
     </div>
 
-    <!-- Container -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
+    <div class="max-w-5xl mx-auto px-4 py-6">
         <!-- Header -->
-        <header class="flex flex-col md:flex-row md:items-center md:justify-between pb-6 border-b border-gray-200 dark:border-gray-800 gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-500/30">
-                    <i class="fa-solid fa-clipboard-check text-2xl"></i>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200/80">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
+                    <i class="fas fa-tasks text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">ระบบแจ้งเตือนและจัดการงาน</h1>
-                    <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">วางแผนงานประจำวัน และติดตามงานที่ได้รับมอบหมาย</p>
+                    <h1 class="text-2xl font-bold text-slate-800">ระบบแจ้งเตือนและจัดการงาน</h1>
+                    <p class="text-sm text-slate-500">วางแผนงานประจำวัน และติดตามงานที่ได้รับมอบหมาย</p>
                 </div>
             </div>
-
-            <!-- Actions Header -->
             <div class="flex items-center space-x-3">
-                <button onclick="openLineModal()" class="p-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-medium shadow-md shadow-emerald-500/20 flex items-center space-x-2 transition active:scale-95" title="ตั้งค่า LINE Notification">
-                    <i class="fa-brands fa-line text-xl"></i>
-                    <span class="hidden sm:inline text-sm">ตั้งค่า LINE</span>
-                </button>
-                <button onclick="openModal()" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition active:scale-95">
-                    <i class="fa-solid fa-plus"></i>
+                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-xl shadow-md shadow-blue-500/20 transition flex items-center space-x-2">
+                    <i class="fas fa-plus"></i>
                     <span>เพิ่มงานใหม่</span>
                 </button>
-                <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700 transition" title="สลับโหมดมืด/สว่าง">
-                    <i id="darkModeIcon" class="fa-solid fa-moon text-lg"></i>
-                </button>
             </div>
-        </header>
+        </div>
 
-        <!-- Stats Overview Cards -->
-        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-6">
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">งานทั้งหมด</p>
-                    <h3 id="statTotal" class="text-2xl font-bold mt-1">0</h3>
-                </div>
-                <div class="p-3 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl">
-                    <i class="fa-solid fa-list-check text-xl"></i>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">รอดำเนินการ / ทำอยู่</p>
-                    <h3 id="statPending" class="text-2xl font-bold mt-1 text-amber-500">0</h3>
-                </div>
-                <div class="p-3 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-xl">
-                    <i class="fa-solid fa-clock text-xl"></i>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">เสร็จสิ้นแล้ว</p>
-                    <h3 id="statCompleted" class="text-2xl font-bold mt-1 text-emerald-500">0</h3>
-                </div>
-                <div class="p-3 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-xl">
-                    <i class="fa-solid fa-circle-check text-xl"></i>
-                </div>
-            </div>
-
-            <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-medium text-gray-500 dark:text-gray-400">เกินกำหนดส่ง</p>
-                    <h3 id="statOverdue" class="text-2xl font-bold mt-1 text-rose-500">0</h3>
-                </div>
-                <div class="p-3 bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 rounded-xl">
-                    <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-                </div>
-            </div>
-        </section>
-
-        <!-- Main Content Area -->
-        <main class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700/50 overflow-hidden">
-            
-            <!-- Tabs & Filters Bar -->
-            <div class="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700/50 space-y-4">
-                
-                <!-- Category Tabs -->
-                <div class="flex border-b border-gray-200 dark:border-gray-700">
-                    <button id="tabDaily" onclick="switchCategoryTab('daily')" class="pb-3 px-4 font-semibold text-sm border-b-2 border-blue-600 text-blue-600 dark:text-blue-400 flex items-center space-x-2">
-                        <i class="fa-solid fa-calendar-day"></i>
-                        <span>งานประจำวัน</span>
-                        <span id="badgeDailyCount" class="ml-2 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 text-xs px-2 py-0.5 rounded-full">0</span>
-                    </button>
-                    <button id="tabAssigned" onclick="switchCategoryTab('assigned')" class="pb-3 px-4 font-semibold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center space-x-2">
-                        <i class="fa-solid fa-user-tag"></i>
-                        <span>งานที่ได้รับมอบหมาย</span>
-                        <span id="badgeAssignedCount" class="ml-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-xs px-2 py-0.5 rounded-full">0</span>
-                    </button>
-                </div>
-
-                <!-- Search and Filters Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-                    <!-- Search Input -->
-                    <div class="relative">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-gray-400 text-sm"></i>
-                        <input type="text" id="searchInput" oninput="renderTasks()" placeholder="ค้นหางาน..." class="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    </div>
-
-                    <!-- Priority Filter -->
-                    <div>
-                        <select id="priorityFilter" onchange="renderTasks()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="all">ความสำคัญทั้งหมด</option>
-                            <option value="high">🔴 ความสำคัญสูง (High)</option>
-                            <option value="medium">🟡 ความสำคัญปานกลาง (Medium)</option>
-                            <option value="low">🟢 ความสำคัญต่ำ (Low)</option>
-                        </select>
-                    </div>
-
-                    <!-- Status Filter -->
-                    <div>
-                        <select id="statusFilter" onchange="renderTasks()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="all">สถานะทั้งหมด</option>
-                            <option value="todo">📋 รอดำเนินการ (To Do)</option>
-                            <option value="in_progress">⏳ กำลังทำ (In Progress)</option>
-                            <option value="completed">✅ เสร็จสิ้น (Completed)</option>
-                        </select>
-                    </div>
-
-                    <!-- Sort Option -->
-                    <div>
-                        <select id="sortBy" onchange="renderTasks()" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="dueDate">เรียงตาม: กำหนดส่งใกล้สุด</option>
-                            <option value="priority">เรียงตาม: ความสำคัญสูงสุด</option>
-                            <option value="created">เรียงตาม: สร้างล่าสุด</option>
-                        </select>
+        <!-- Dashboard Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="flex items-center justify-between text-slate-500 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">งานทั้งหมด</span>
+                    <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-600">
+                        <i class="fas fa-list-ul"></i>
                     </div>
                 </div>
+                <div class="text-2xl font-bold text-slate-800" id="stat-total">0</div>
             </div>
 
-            <!-- Task Cards List Container -->
-            <div id="taskList" class="p-4 sm:p-6 space-y-3 min-h-[300px]">
-                <!-- Task items will be inserted dynamically here -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="flex items-center justify-between text-amber-600 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">รอดำเนินการ</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-slate-800" id="stat-pending">0</div>
             </div>
-        </main>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="flex items-center justify-between text-emerald-600 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">เสร็จสิ้นแล้ว</span>
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-slate-800" id="stat-completed">0</div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+                <div class="flex items-center justify-between text-rose-600 mb-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider">เกินกำหนดส่ง</span>
+                    <div class="w-8 h-8 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                </div>
+                <div class="text-2xl font-bold text-slate-800" id="stat-overdue">0</div>
+            </div>
+        </div>
+
+        <!-- Task List Container -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+            <!-- Search & Filters -->
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="fas fa-search absolute left-3.5 top-3 text-slate-400"></i>
+                    <input type="text" id="search-input" oninput="renderTasks()" placeholder="ค้นหางาน..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500">
+                </div>
+                <div class="flex gap-2">
+                    <select id="filter-repeat" onchange="renderTasks()" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="all">รูปแบบงานทั้งหมด</option>
+                        <option value="daily">งานซ้ำทุกวัน</option>
+                        <option value="once">งานทำครั้งเดียว</option>
+                    </select>
+                    <select id="filter-status" onchange="renderTasks()" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <option value="all">สถานะทั้งหมด</option>
+                        <option value="pending">รอดำเนินการ</option>
+                        <option value="completed">เสร็จสิ้น</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Task Items -->
+            <div id="task-list" class="divide-y divide-slate-100">
+                <!-- Task Items Will Be Rendered Here -->
+            </div>
+        </div>
     </div>
 
-    <!-- Task Form Modal -->
-    <div id="taskModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-700 my-8">
-            <div class="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-gray-700">
-                <h3 id="modalTitle" class="text-xl font-bold text-gray-900 dark:text-white">เพิ่มงานใหม่</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+    <!-- Add/Edit Task Modal -->
+    <div id="task-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-bold text-slate-800" id="modal-title">เพิ่มงานใหม่</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-xl"></i></button>
             </div>
 
-            <form id="taskForm" onsubmit="handleSaveTask(event)" class="space-y-4 mt-4">
-                <input type="hidden" id="taskId">
+            <form id="task-form" onsubmit="saveTask(event)">
+                <input type="hidden" id="task-id">
                 
-                <!-- Title -->
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">หัวข้องาน <span class="text-red-500">*</span></label>
-                    <input type="text" id="taskTitle" required placeholder="เช่น ส่งรายงานประจำสัปดาห์" class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <!-- Category & Priority Row -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">ประเภทงาน</label>
-                        <select id="taskCategory" onchange="toggleAssigneeInput()" class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="daily">📅 งานประจำวัน</option>
-                            <option value="assigned">👤 งานที่ได้รับมอบหมาย</option>
-                        </select>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">ชื่อชื่องาน / รายการที่ต้องทำ</label>
+                        <input type="text" id="task-title" required placeholder="เช่น บันทึกสวัสดิการ แบบ 7105" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">ความสำคัญ</label>
-                        <select id="taskPriority" class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="high">🔴 สูง (High)</option>
-                            <option value="medium" selected>🟡 ปานกลาง (Medium)</option>
-                            <option value="low">🟢 ต่ำ (Low)</option>
-                        </select>
-                    </div>
-                </div>
 
-                <!-- Assignee Field (Conditional) -->
-                <div id="assigneeContainer" class="hidden">
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">ผู้มอบหมายงาน / ผู้รับผิดชอบ</label>
-                    <input type="text" id="taskAssignee" placeholder="เช่น ผจก. สมชาย หรือ ทีมการตลาด" class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <!-- Date and Time Row -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">วันกำหนดส่ง <span class="text-red-500">*</span></label>
-                        <input type="date" id="taskDueDate" required class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">ลิงก์ระบบงาน (ถ้ามี)</label>
+                        <input type="url" id="task-link" placeholder="https://..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
                     </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">รูปแบบการทำซ้ำ</label>
+                            <select id="task-repeat" onchange="toggleDateInput()" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none bg-white">
+                                <option value="daily">🔄 ทำซ้ำทุกวัน (Daily)</option>
+                                <option value="once">📅 ทำครั้งเดียว (Specific Date)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">เวลาแจ้งเตือน</label>
+                            <input type="time" id="task-time" required class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
+                        </div>
+                    </div>
+
+                    <div id="date-container" class="hidden">
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">วันที่กำหนดส่ง</label>
+                        <input type="date" id="task-date" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none">
+                    </div>
+
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">เวลาแจ้งเตือน <span class="text-red-500">*</span></label>
-                        <input type="time" id="taskDueTime" required class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">รายละเอียดเพิ่มเติม</label>
+                        <textarea id="task-desc" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติม..." class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"></textarea>
                     </div>
                 </div>
 
-                <!-- Description -->
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">รายละเอียดเพิ่มเติม</label>
-                    <textarea id="taskDescription" rows="3" placeholder="ระบุรายละเอียดงาน..." class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                </div>
-
-                <!-- Send to Line Checkbox -->
-                <div class="flex items-center space-x-2 pt-1">
-                    <input type="checkbox" id="sendLineOnCreate" class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
-                    <label for="sendLineOnCreate" class="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <i class="fa-brands fa-line text-emerald-500 text-sm mr-1.5"></i> ส่งการแจ้งเตือนสร้างงานใหม่เข้า LINE ทันที
-                    </label>
-                </div>
-
-                <!-- Form Action Buttons -->
-                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition">ยกเลิก</button>
-                    <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 shadow-md shadow-blue-500/20 transition">บันทึกงาน</button>
+                <div class="mt-6 flex justify-end space-x-3">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-medium text-sm hover:bg-slate-50">ยกเลิก</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 shadow-md shadow-blue-500/20">บันทึกข้อมูล</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- LINE Settings Modal -->
-    <div id="lineModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
-        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-700 my-8">
-            <div class="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-gray-700">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-brands fa-line text-emerald-500 text-2xl"></i>
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">ตั้งค่าแจ้งเตือนผ่าน LINE</h3>
-                </div>
-                <button onclick="closeLineModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-lg">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <form id="lineConfigForm" onsubmit="saveLineConfig(event)" class="space-y-4 mt-4">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">LINE Webhook URL / Endpoint <span class="text-red-500">*</span></label>
-                    <input type="url" id="lineWebhookUrl" placeholder="https://hook.eu1.make.com/your-webhook-id" class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1.5 leading-relaxed">
-                        รองรับ **Make.com / n8n / Zapier Webhook** หรือ URL API ที่ส่งข้อมูลเข้า LINE Notify / LINE Messaging API
-                    </p>
-                </div>
-
-                <div class="flex items-center space-x-2 pt-2">
-                    <input type="checkbox" id="lineEnabled" class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
-                    <label for="lineEnabled" class="text-sm font-medium text-gray-800 dark:text-gray-200">
-                        เปิดใช้งานการส่งแจ้งเตือนเข้า LINE เมื่อถึงเวลาเตือน
-                    </label>
-                </div>
-
-                <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-3.5 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 space-y-1">
-                    <p class="font-semibold"><i class="fa-solid fa-circle-info mr-1"></i> คำแนะนำการเชื่อมต่อ:</p>
-                    <p>สามารถสร้าง Webhook รับข้อความง่ายๆ ฟรี ผ่าน Make.com หรือ n8n เพื่อยิงเข้า LINE Official Account ของคุณได้เลยครับ</p>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
-                    <button type="button" onclick="testLineNotification()" class="px-3.5 py-2 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 rounded-xl text-xs font-semibold hover:bg-emerald-200 transition flex items-center space-x-1.5">
-                        <i class="fa-solid fa-paper-plane"></i>
-                        <span>ทดสอบส่ง LINE</span>
-                    </button>
-                    <div class="flex space-x-2">
-                        <button type="button" onclick="closeLineModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition">ยกเลิก</button>
-                        <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-xl text-sm font-medium hover:bg-emerald-700 shadow-md shadow-emerald-500/20 transition">บันทึกการตั้งค่า</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Notification Toast Container -->
-    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
-
-    <!-- JavaScript Logic -->
     <script>
-        // Data State
-        let tasks = JSON.parse(localStorage.getItem('app_tasks')) || [];
-        let lineConfig = JSON.parse(localStorage.getItem('app_line_config')) || { url: '', enabled: false };
-        let currentTab = 'daily'; // 'daily' or 'assigned'
-        let triggeredNotifs = new Set(); // To prevent duplicate alerts
+        let tasks = JSON.parse(localStorage.getItem('my_tasks') || '[]');
 
-        // Init App
-        window.onload = function() {
-            initTheme();
-            checkNotificationPermission();
-            setTodayDefaultDate();
+        // Check Notification Permission
+        document.addEventListener('DOMContentLoaded', () => {
+            checkNotificationStatus();
             renderTasks();
-            loadLineConfig();
-            
-            // Notification Scheduler Interval (Check every 10 seconds)
-            setInterval(checkUpcomingTasksAndNotify, 10000);
-        };
+            setInterval(checkTaskReminders, 30000); // Check every 30 secs
+        });
 
-        // Theme Toggle
-        function initTheme() {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                document.getElementById('darkModeIcon').className = 'fa-solid fa-sun text-lg text-amber-400';
-            } else {
-                document.documentElement.classList.remove('dark');
-                document.getElementById('darkModeIcon').className = 'fa-solid fa-moon text-lg text-gray-700';
-            }
-        }
-
-        function toggleDarkMode() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-                document.getElementById('darkModeIcon').className = 'fa-solid fa-moon text-lg text-gray-700';
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-                document.getElementById('darkModeIcon').className = 'fa-solid fa-sun text-lg text-amber-400';
-            }
-        }
-
-        // Notification Permission Logic
-        function checkNotificationPermission() {
-            if (!("Notification" in window)) return;
-            if (Notification.permission !== "granted" && Notification.permission !== "denied") {
-                document.getElementById('notifPermissionBanner').classList.remove('hidden');
+        function checkNotificationStatus() {
+            if ("Notification" in window) {
+                if (Notification.permission !== "granted") {
+                    document.getElementById('notif-banner').classList.remove('hidden');
+                }
             }
         }
 
         function requestNotificationPermission() {
-            if (!("Notification" in window)) {
-                showToast("เบราว์เซอร์ของคุณไม่รองรับระบบแจ้งเตือน", "warning");
+            if ("Notification" in window) {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        document.getElementById('notif-banner').classList.add('hidden');
+                        new Notification("เปิดการแจ้งเตือนสำเร็จ!", { body: "ระบบจะส่งการแจ้งเตือนเมื่อถึงเวลาทำงาน" });
+                    }
+                });
+            }
+        }
+
+        function closeBanner() {
+            document.getElementById('notif-banner').classList.add('hidden');
+        }
+
+        function toggleDateInput() {
+            const repeat = document.getElementById('task-repeat').value;
+            const dateContainer = document.getElementById('date-container');
+            if (repeat === 'once') {
+                dateContainer.classList.remove('hidden');
+                document.getElementById('task-date').required = true;
+            } else {
+                dateContainer.classList.add('hidden');
+                document.getElementById('task-date').required = false;
+            }
+        }
+
+        function openModal(taskId = null) {
+            document.getElementById('task-form').reset();
+            document.getElementById('task-id').value = '';
+            document.getElementById('modal-title').innerText = 'เพิ่มงานใหม่';
+            toggleDateInput();
+
+            if (taskId) {
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    document.getElementById('task-id').value = task.id;
+                    document.getElementById('task-title').value = task.title;
+                    document.getElementById('task-link').value = task.link || '';
+                    document.getElementById('task-repeat').value = task.repeat || 'once';
+                    document.getElementById('task-time').value = task.time;
+                    document.getElementById('task-date').value = task.date || '';
+                    document.getElementById('task-desc').value = task.desc || '';
+                    document.getElementById('modal-title').innerText = 'แก้ไขงาน';
+                    toggleDateInput();
+                }
+            }
+
+            document.getElementById('task-modal').classList.remove('hidden');
+            document.getElementById('task-modal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('task-modal').classList.add('hidden');
+            document.getElementById('task-modal').classList.remove('flex');
+        }
+
+        function saveTask(e) {
+            e.preventDefault();
+            const id = document.getElementById('task-id').value || Date.now().toString();
+            const title = document.getElementById('task-title').value;
+            const link = document.getElementById('task-link').value;
+            const repeat = document.getElementById('task-repeat').value;
+            const time = document.getElementById('task-time').value;
+            const date = repeat === 'once' ? document.getElementById('task-date').value : new Date().toISOString().split('T')[0];
+            const desc = document.getElementById('task-desc').value;
+
+            const existingIndex = tasks.findIndex(t => t.id === id);
+            const taskData = {
+                id, title, link, repeat, time, date, desc,
+                completed: false,
+                notified: false
+            };
+
+            if (existingIndex > -1) {
+                tasks[existingIndex] = { ...tasks[existingIndex], ...taskData };
+            } else {
+                tasks.push(taskData);
+            }
+
+            localStorage.setItem('my_tasks', JSON.stringify(tasks));
+            closeModal();
+            renderTasks();
+        }
+
+        function toggleComplete(id) {
+            const task = tasks.find(t => t.id === id);
+            if (task) {
+                if (task.repeat === 'daily') {
+                    // If daily task completed, set date to tomorrow for next reminder
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    task.date = tomorrow.toISOString().split('T')[0];
+                    task.notified = false;
+                    task.completed = false; // keep active for tomorrow
+                    alert("เก่งมาก! ทำงานประจำวันนี้เรียบร้อยแล้ว ระบบจะตั้งเตือนสำหรับวันพรุ่งนี้ให้อัตโนมัติครับ");
+                } else {
+                    task.completed = !task.completed;
+                }
+                localStorage.setItem('my_tasks', JSON.stringify(tasks));
+                renderTasks();
+            }
+        }
+
+        function deleteTask(id) {
+            if (confirm('คุณต้องการลบรายการนี้ใช่หรือไม่?')) {
+                tasks = tasks.filter(t => t.id !== id);
+                localStorage.setItem('my_tasks', JSON.stringify(tasks));
+                renderTasks();
+            }
+        }
+
+        function renderTasks() {
+            const search = document.getElementById('search-input').value.toLowerCase();
+            const repeatFilter = document.getElementById('filter-repeat').value;
+            const statusFilter = document.getElementById('filter-status').value;
+
+            const filtered = tasks.filter(t => {
+                const matchSearch = t.title.toLowerCase().includes(search);
+                const matchRepeat = repeatFilter === 'all' || t.repeat === repeatFilter;
+                const matchStatus = statusFilter === 'all' || 
+                                    (statusFilter === 'completed' && t.completed) ||
+                                    (statusFilter === 'pending' && !t.completed);
+                return matchSearch && matchRepeat && matchStatus;
+            });
+
+            // Stats
+            document.getElementById('stat-total').innerText = tasks.length;
+            document.getElementById('stat-pending').innerText = tasks.filter(t => !t.completed).length;
+            document.getElementById('stat-completed').innerText = tasks.filter(t => t.completed).length;
+            
+            const todayStr = new Date().toISOString().split('T')[0];
+            document.getElementById('stat-overdue').innerText = tasks.filter(t => !t.completed && t.date < todayStr && t.repeat === 'once').length;
+
+            const listEl = document.getElementById('task-list');
+            if (filtered.length === 0) {
+                listEl.innerHTML = `<div class="p-8 text-center text-slate-400">ไม่พบรายการงาน</div>`;
                 return;
             }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    showToast("เปิดใช้งานการแจ้งเตือนสำเร็จ!", "success");
-                    document.getElementById('notifPermissionBanner').classList.add('hidden');
-                    // Send test notification
-                    new Notification("ระบบแจ้งเตือนพร้อมใช้งาน", {
-                        body: "คุณจะได้รับแจ้งเตือนเมื่อถึงเวลาตามที่ตั้งไว้",
-                        icon: "https://cdn-icons-png.flaticon.com/512/3602/3602145.png"
-                    });
-                } else {
-                    showToast("ปฏิเสธการอนุญาตแจ้งเตือน", "error");
-                }
-            });
+
+            listEl.innerHTML = filtered.map(t => `
+                <div class="p-4 flex items-center justify-between hover:bg-slate-50 transition">
+                    <div class="flex items-start space-x-3">
+                        <button onclick="toggleComplete('${t.id}')" class="mt-1 text-slate-300 hover:text-emerald-500 transition">
+                            <i class="fas ${t.completed ? 'fa-check-circle text-emerald-500' : 'fa-circle'} text-xl"></i>
+                        </button>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h4 class="font-semibold text-slate-800 ${t.completed ? 'line-through text-slate-400' : ''}">${t.title}</h4>
+                                <span class="text-xs px-2 py-0.5 rounded-md font-medium ${t.repeat === 'daily' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">
+                                    ${t.repeat === 'daily' ? '🔄 ทำซ้ำทุกวัน' : '📅 ครั้งเดียว'}
+                                </span>
+                            </div>
+                            ${t.desc ? `<p class="text-xs text-slate-500 mt-1">${t.desc}</p>` : ''}
+                            <div class="flex items-center space-x-4 mt-2 text-xs text-slate-400">
+                                <span><i class="far fa-clock mr-1"></i>${t.time} น.</span>
+                                ${t.repeat === 'once' ? `<span><i class="far fa-calendar mr-1"></i>${t.date}</span>` : ''}
+                                ${t.link ? `<a href="${t.link}" target="_blank" class="text-blue-600 hover:underline"><i class="fas fa-external-link-alt mr-1"></i>เปิดลิงก์ระบบ</a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="openModal('${t.id}')" class="text-slate-400 hover:text-blue-600 p-2"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteTask('${t.id}')" class="text-slate-400 hover:text-rose-600 p-2"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function dismissNotifBanner() {
-            document.getElementById('notifPermissionBanner').classList.add('hidden');
-        }
-
-        // Check & Trigger Notifications
-        function checkUpcomingTasksAndNotify() {
+        function checkTaskReminders() {
             const now = new Date();
-            const currentDateStr = now.toISOString().split('T')[0];
-            const currentHours = String(now.getHours()).padStart(2, '0');
-            const currentMinutes = String(now.getMinutes()).padStart(2, '0');
-            const currentTimeStr = `${currentHours}:${currentMinutes}`;
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const currentDate = now.toISOString().split('T')[0];
 
             tasks.forEach(task => {
-                if (task.status !== 'completed' && task.dueDate === currentDateStr && task.dueTime === currentTimeStr) {
-                    if (!triggeredNotifs.has(task.id)) {
-                        triggeredNotifs.add(task.id);
+                if (!task.completed && task.time === currentTime && !task.notified) {
+                    if (task.repeat === 'daily' || task.date === currentDate) {
                         sendBrowserNotification(task);
-                        
-                        // Send LINE Notification if enabled
-                        if (lineConfig.enabled && lineConfig.url) {
-                            sendLineTaskNotification(task, "⏰ แจ้งเตือนถึงเวลาทำภารกิจ!");
-                        }
-
-                        showToast(`⏰ ถึงเวลาทำงาน: ${task.title}`, "info");
+                        task.notified = true;
+                        localStorage.setItem('my_tasks', JSON.stringify(tasks));
                     }
                 }
             });
         }
 
-        // LINE Integration Logic
-        function openLineModal() {
-            document.getElementById('lineModal').classList.remove('hidden');
-        }
-
-        function closeLineModal() {
-            document.getElementById('lineModal').classList.add('hidden');
-        }
-
-        function loadLineConfig() {
-            document.getElementById('lineWebhookUrl').value = lineConfig.url || '';
-            document.getElementById('lineEnabled').checked = !!lineConfig.enabled;
-        }
-
-        function saveLineConfig(e) {
-            e.preventDefault();
-            const url = document.getElementById('lineWebhookUrl').value.trim();
-            const enabled = document.getElementById('lineEnabled').checked;
-
-            lineConfig = { url, enabled };
-            localStorage.setItem('app_line_config', JSON.stringify(lineConfig));
-            showToast("บันทึกการตั้งค่า LINE สำเร็จ", "success");
-            closeLineModal();
-        }
-
-        async function sendLineTaskNotification(task, customHeader = "📌 แจ้งเตือนงานใหม่") {
-            if (!lineConfig.url) return;
-
-            const message = `${customHeader}\n` +
-                            `--------------------\n` +
-                            `📌 หัวข้อ: ${task.title}\n` +
-                            `📂 หมวดหมู่: ${task.category === 'daily' ? 'งานประจำวัน' : 'งานที่ได้รับมอบหมาย'}\n` +
-                            `🚨 ความสำคัญ: ${getPriorityText(task.priority)}\n` +
-                            `📅 กำหนดส่ง: ${formatThaiDate(task.dueDate)} เวลา ${task.dueTime} น.\n` +
-                            (task.assignee ? `👤 ผู้รับผิดชอบ: ${task.assignee}\n` : '') +
-                            (task.description ? `📝 รายละเอียด: ${task.description}` : '');
-
-            try {
-                await fetch(lineConfig.url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    mode: 'no-cors',
-                    body: JSON.stringify({ message: message, task: task })
+        function sendBrowserNotification(task) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(`🔔 ถึงเวลาทำงาน: ${task.title}`, {
+                    body: task.desc || `กำหนดเวลา ${task.time} น.`,
+                    icon: 'https://cdn-icons-png.flaticon.com/512/3112/3112933.png'
                 });
-            } catch (err) {
-                console.error("Failed to send LINE notification", err);
             }
-        }
-
-        async function testLineNotification() {
-            const url = document.getElementById('lineWebhookUrl').value.trim();
-            if (!url) {
-                showToast("กรุณากรอก Webhook URL ก่อนทดสอบ", "warning");
-                return;
-            }
-
-            try {
-                await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    mode: 'no-cors',
-                    body: JSON.stringify({ 
-                        message: "🔔 ทดสอบการเชื่อมต่อระบบแจ้งเตือน LINE สำเร็จแล้ว!",
-                        timestamp: new Date().toISOString()
-                    })
-                });
-                showToast("ส่งข้อความทดสอบไปยัง Webhook แล้ว", "success");
-            } catch (err) {
-                showToast("เกิดข้อผิดพลาดในการส่งข้อความ", "error");
-            }
-        }
-
-        // Save Task Handler (Add/Edit)
-        function handleSaveTask(e) {
-            e.preventDefault();
-            const id = document.getElementById('taskId').value;
-            const title = document.getElementById('taskTitle').value.trim();
-            const category = document.getElementById('taskCategory').value;
-            const priority = document.getElementById('taskPriority').value;
-            const assignee = document.getElementById('taskAssignee').value.trim();
-            const dueDate = document.getElementById('taskDueDate').value;
-            const dueTime = document.getElementById('taskDueTime').value;
-            const description = document.getElementById('taskDescription').value.trim();
-            const sendLine = document.getElementById('sendLineOnCreate').checked;
-
-            if (!title || !dueDate || !dueTime) return;
-
-            if (id) {
-                // Update Existing
-                const index = tasks.findIndex(t => t.id === id);
-                if (index !== -1) {
-                    tasks[index] = {
-                        ...tasks[index],
-                        title, category, priority, assignee, dueDate, dueTime, description,
-                        updatedAt: new Date().toISOString()
-                    };
-                    showToast("อัปเดตงานสำเร็จ", "success");
-                }
-            } else {
-                // Create New
-                const newTask = {
-                    id: Date.now().toString(),
-                    title,
-                    category,
-                    priority,
-                    assignee: category === 'assigned' ? (assignee || 'ไม่ระบุ') : '',
-                    dueDate,
-                    dueTime,
-                    description,
-                    status: 'todo', // 'todo', 'in_progress', 'completed'
-                    createdAt: new Date().toISOString()
-                };
-                tasks.push(newTask);
-                showToast("สร้างงานใหม่เรียบร้อยแล้ว", "success");
-
-                // Send immediate LINE notification if checked
-                if (sendLine && lineConfig.url) {
-                    sendLineTaskNotification(newTask, "➕ บันทึกงานใหม่ลงระบบแล้ว");
-                }
-            }
-
-            saveToLocalStorage();
-            closeModal();
-            renderTasks();
-        }
-
-        // Delete Task
-        function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            saveToLocalStorage();
-            renderTasks();
-            showToast("ลบรายการงานเรียบร้อยแล้ว", "info");
-        }
-
-        // Toggle Status
-        function updateTaskStatus(id, newStatus) {
-            const task = tasks.find(t => t.id === id);
-            if (task) {
-                task.status = newStatus;
-                saveToLocalStorage();
-                renderTasks();
-                if (newStatus === 'completed') {
-                    showToast("ยินดีด้วย! คุณทำภารกิจสำเร็จแล้ว 🎉", "success");
-                }
-            }
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('app_tasks', JSON.stringify(tasks));
-        }
-
-        // Helper Functions
-        function isOverdue(dueDateStr, dueTimeStr, status) {
-            if (status === 'completed') return false;
-            const due = new Date(`${dueDateStr}T${dueTimeStr}`);
-            return due < new Date();
-        }
-
-        function getPriorityBadge(priority) {
-            switch (priority) {
-                case 'high':
-                    return `<span class="bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 text-xs px-2.5 py-1 rounded-full font-medium"><i class="fa-solid fa-flag text-xs mr-1"></i> สูง</span>`;
-                case 'medium':
-                    return `<span class="bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 text-xs px-2.5 py-1 rounded-full font-medium"><i class="fa-solid fa-flag text-xs mr-1"></i> ปานกลาง</span>`;
-                case 'low':
-                    return `<span class="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 text-xs px-2.5 py-1 rounded-full font-medium"><i class="fa-solid fa-flag text-xs mr-1"></i> ต่ำ</span>`;
-            }
-        }
-
-        function getPriorityText(p) {
-            return p === 'high' ? 'สูง' : p === 'medium' ? 'ปานกลาง' : 'ต่ำ';
-        }
-
-        // Main Render Function
-        function renderTasks() {
-            const listContainer = document.getElementById('taskList');
-            const searchVal = document.getElementById('searchInput').value.toLowerCase();
-            const priorityVal = document.getElementById('priorityFilter').value;
-            const statusVal = document.getElementById('statusFilter').value;
-            const sortByVal = document.getElementById('sortBy').value;
-
-            // Filter
-            let filtered = tasks.filter(t => t.category === currentTab);
-
-            if (searchVal) {
-                filtered = filtered.filter(t => 
-                    t.title.toLowerCase().includes(searchVal) || 
-                    (t.description && t.description.toLowerCase().includes(searchVal)) ||
-                    (t.assignee && t.assignee.toLowerCase().includes(searchVal))
-                );
-            }
-
-            if (priorityVal !== 'all') {
-                filtered = filtered.filter(t => t.priority === priorityVal);
-            }
-
-            if (statusVal !== 'all') {
-                filtered = filtered.filter(t => t.status === statusVal);
-            }
-
-            // Sort
-            filtered.sort((a, b) => {
-                if (sortByVal === 'dueDate') {
-                    return new Date(`${a.dueDate}T${a.dueTime}`) - new Date(`${b.dueDate}T${b.dueTime}`);
-                } else if (sortByVal === 'priority') {
-                    const weight = { high: 3, medium: 2, low: 1 };
-                    return weight[b.priority] - weight[a.priority];
-                } else if (sortByVal === 'created') {
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                }
-            });
-
-            // Render Badges Count & Stats
-            updateStatsAndBadges();
-
-            if (filtered.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="text-center py-12 text-gray-400 dark:text-gray-500">
-                        <i class="fa-regular fa-clipboard text-5xl mb-3"></i>
-                        <p class="text-base font-medium">ไม่พบรายการงานที่คุณกำลังค้นหา</p>
-                        <p class="text-xs mt-1">กดปุ่ม "เพิ่มงานใหม่" เพื่อเริ่มต้นบันทึกงานของคุณ</p>
-                    </div>
-                `;
-                return;
-            }
-
-            listContainer.innerHTML = filtered.map(t => {
-                const overdue = isOverdue(t.dueDate, t.dueTime, t.status);
-                const isDone = t.status === 'completed';
-
-                return `
-                    <div class="group p-4 bg-gray-50/50 dark:bg-gray-900/40 hover:bg-white dark:hover:bg-gray-700/50 rounded-xl border ${overdue ? 'border-rose-300 dark:border-rose-800' : 'border-gray-200 dark:border-gray-700/60'} shadow-sm hover:shadow transition duration-150 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        
-                        <div class="flex items-start space-x-3 w-full sm:w-auto flex-1">
-                            <!-- Custom Checkbox -->
-                            <button onclick="updateTaskStatus('${t.id}', '${isDone ? 'todo' : 'completed'}')" class="mt-1 sm:mt-0 flex-shrink-0 w-6 h-6 rounded-lg border ${isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-gray-300 dark:border-gray-600 hover:border-blue-500'} flex items-center justify-center transition">
-                                ${isDone ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
-                            </button>
-
-                            <div class="space-y-1 flex-1">
-                                <div class="flex flex-wrap items-center gap-2">
-                                    <h4 class="text-base font-semibold ${isDone ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-900 dark:text-white'}">
-                                        ${escapeHtml(t.title)}
-                                    </h4>
-                                    ${getPriorityBadge(t.priority)}
-                                    ${overdue ? '<span class="bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 text-xs px-2 py-0.5 rounded-md font-semibold"><i class="fa-solid fa-triangle-exclamation mr-1"></i>เกินกำหนด</span>' : ''}
-                                </div>
-
-                                ${t.description ? `<p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">${escapeHtml(t.description)}</p>` : ''}
-
-                                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 dark:text-gray-400 pt-1">
-                                    <span class="flex items-center"><i class="fa-regular fa-calendar mr-1"></i> ${formatThaiDate(t.dueDate)}</span>
-                                    <span class="flex items-center"><i class="fa-regular fa-clock mr-1"></i> ${t.dueTime} น.</span>
-                                    ${t.category === 'assigned' && t.assignee ? `<span class="flex items-center text-blue-600 dark:text-blue-400 font-medium"><i class="fa-solid fa-user-circle mr-1"></i> ${escapeHtml(t.assignee)}</span>` : ''}
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Status & Controls Right -->
-                        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100 dark:border-gray-800">
-                            <!-- Status Selector Dropdown -->
-                            <select onchange="updateTaskStatus('${t.id}', this.value)" class="text-xs font-medium px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                                <option value="todo" ${t.status === 'todo' ? 'selected' : ''}>📋 รอดำเนินการ</option>
-                                <option value="in_progress" ${t.status === 'in_progress' ? 'selected' : ''}>⏳ กำลังทำ</option>
-                                <option value="completed" ${t.status === 'completed' ? 'selected' : ''}>✅ เสร็จสิ้น</option>
-                            </select>
-
-                            <!-- Action Buttons -->
-                            <div class="flex items-center space-x-1 opacity-90 group-hover:opacity-100">
-                                <button onclick="openModal('${t.id}')" class="p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="แก้ไข">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button onclick="deleteTask('${t.id}')" class="p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition" title="ลบ">
-                                    <i class="fa-solid fa-trash-can"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Stats Counter Update
-        function updateStatsAndBadges() {
-            const dailyCount = tasks.filter(t => t.category === 'daily').length;
-            const assignedCount = tasks.filter(t => t.category === 'assigned').length;
-
-            document.getElementById('badgeDailyCount').textContent = dailyCount;
-            document.getElementById('badgeAssignedCount').textContent = assignedCount;
-
-            const total = tasks.length;
-            const completed = tasks.filter(t => t.status === 'completed').length;
-            const pending = tasks.filter(t => t.status !== 'completed').length;
-            const overdue = tasks.filter(t => isOverdue(t.dueDate, t.dueTime, t.status)).length;
-
-            document.getElementById('statTotal').textContent = total;
-            document.getElementById('statCompleted').textContent = completed;
-            document.getElementById('statPending').textContent = pending;
-            document.getElementById('statOverdue').textContent = overdue;
-        }
-
-        // Custom Toast Notifications
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            
-            const bgColors = {
-                success: 'bg-emerald-600 text-white',
-                error: 'bg-rose-600 text-white',
-                warning: 'bg-amber-500 text-white',
-                info: 'bg-blue-600 text-white'
-            };
-
-            const icons = {
-                success: 'fa-circle-check',
-                error: 'fa-circle-xmark',
-                warning: 'fa-triangle-exclamation',
-                info: 'fa-circle-info'
-            };
-
-            toast.className = `pointer-events-auto flex items-center space-x-2 px-4 py-3 rounded-xl shadow-xl text-sm ${bgColors[type]} transform transition-all duration-300 ease-in-out translate-y-5 opacity-0`;
-            toast.innerHTML = `<i class="fa-solid ${icons[type]} text-base"></i><span>${message}</span>`;
-
-            container.appendChild(toast);
-
-            // Animate In
-            setTimeout(() => {
-                toast.classList.remove('translate-y-5', 'opacity-0');
-            }, 50);
-
-            // Animate Out & Remove
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        // Date Formatter (Thai Format)
-        function formatThaiDate(dateStr) {
-            if (!dateStr) return '';
-            const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-            const [year, month, day] = dateStr.split('-');
-            const thaiYear = (parseInt(year) + 543).toString().slice(-2);
-            return `${parseInt(day)} ${months[parseInt(month) - 1]} ${thaiYear}`;
-        }
-
-        // Security Escape HTML
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;")
-                      .replace(/</g, "&lt;")
-                      .replace(/>/g, "&gt;")
-                      .replace(/"/g, "&quot;")
-                      .replace(/'/g, "&#039;");
         }
     </script>
 </body>
