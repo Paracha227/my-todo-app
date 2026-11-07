@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ระบบจัดการงานและแจ้งเตือน</title>
+    <title>ระบบจัดการงานและตารางเรียน</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -31,22 +31,23 @@
             <div class="w-7 h-7 rounded-lg bg-white/20 flex items-center justify-center shrink-0">
                 <i class="fas fa-bell text-white text-sm animate-bounce"></i>
             </div>
-            <span>เปิดรับแจ้งเตือน เพื่อให้เด้งเข้าศูนย์แจ้งเตือนตอนล็อกหน้าจอ!</span>
+            <span>เปิดรับแจ้งเตือน เพื่อไม่ให้พลาดตารางนัดหมายสำคัญ!</span>
         </div>
         <button onclick="requestNotificationPermission()" class="bg-white text-amber-800 px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm active:scale-95 transition shrink-0">เปิดใช้งาน</button>
     </div>
 
+    <!-- App Container -->
     <div class="max-w-md md:max-w-3xl mx-auto px-4 pt-4">
 
         <!-- Header Bar -->
         <header class="flex items-center justify-between mb-5 bg-white/80 dark:bg-slate-900/80 p-4 rounded-3xl shadow-sm border border-slate-200/80 dark:border-slate-800 glass-header sticky top-3 z-30">
             <div class="flex items-center space-x-3">
                 <div class="w-11 h-11 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-md shadow-blue-500/30 shrink-0">
-                    <i class="fas fa-check-double text-lg"></i>
+                    <i class="fas fa-book-open text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-lg font-bold text-slate-800 dark:text-white leading-tight">จัดการงาน & เตือน</h1>
-                    <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">แจ้งเตือนตรงเวลานัดหมาย</p>
+                    <h1 class="text-lg font-bold text-slate-800 dark:text-white leading-tight">จัดการงาน & ตารางเรียน</h1>
+                    <p class="text-[11px] text-slate-400 dark:text-slate-500 font-medium">บันทึกโน้ตและแจ้งเตือน</p>
                 </div>
             </div>
 
@@ -66,7 +67,7 @@
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">งานทั้งหมด</span>
                     <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 text-xs">
-                        <i class="fas fa-list-check"></i>
+                        <i class="fas fa-tasks"></i>
                     </div>
                 </div>
                 <div class="text-2xl font-extrabold text-slate-800 dark:text-white" id="stat-total">0</div>
@@ -107,13 +108,13 @@
         <div class="space-y-3 mb-5">
             <div class="relative">
                 <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 text-sm"></i>
-                <input type="text" id="search-input" oninput="renderTasks()" placeholder="ค้นหางาน..." class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition shadow-sm">
+                <input type="text" id="search-input" oninput="renderTasks()" placeholder="ค้นหางาน หรือ โน้ต..." class="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition shadow-sm">
             </div>
 
-            <!-- Swipeable Filter Pills -->
+            <!-- Filter Pills -->
             <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
                 <button onclick="setFilter('repeat', 'all')" id="btn-rep-all" class="pill-btn active px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-blue-600 text-white shadow-sm transition">ทั้งหมด</button>
-                <button onclick="setFilter('repeat', 'daily')" id="btn-rep-daily" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">🔄 ซ้ำทุกวัน</button>
+                <button onclick="setFilter('repeat', 'daily')" id="btn-rep-daily" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">🔄 ทุกวัน</button>
                 <button onclick="setFilter('repeat', 'weekdays')" id="btn-rep-weekdays" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">💼 จ.-ศ.</button>
                 <button onclick="setFilter('repeat', 'monthly')" id="btn-rep-monthly" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">🗓️ ทุกเดือน</button>
                 <button onclick="setFilter('repeat', 'once')" id="btn-rep-once" class="pill-btn px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 transition">📅 ครั้งเดียว</button>
@@ -135,38 +136,34 @@
 
     <!-- Modal Form -->
     <div id="task-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4 z-50">
-        <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition">
+        <div class="bg-white dark:bg-slate-900 rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition max-h-[90vh] overflow-y-auto no-scrollbar">
             <div class="flex justify-between items-center mb-5">
                 <div class="flex items-center space-x-2">
                     <div class="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/80 flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm">
                         <i class="fas fa-pen"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white" id="modal-title">เพิ่มงานใหม่</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white" id="modal-title">เพิ่มงาน / ตารางเรียน</h3>
                 </div>
                 <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full bg-slate-100 dark:bg-slate-800"><i class="fas fa-times text-sm"></i></button>
             </div>
 
             <form id="task-form" onsubmit="saveTask(event)" class="space-y-4">
                 <input type="hidden" id="task-id">
+                <input type="hidden" id="task-img-base64">
                 
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">ชื่องาน / รายการที่ต้องทำ</label>
-                    <input type="text" id="task-title" required placeholder="เช่น บันทึกสวัสดิการ แบบ 7105" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <div>
-                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">ลิงก์ระบบงาน (ถ้ามี)</label>
-                    <input type="url" id="task-link" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">ชื่องาน / วิชาเรียน</label>
+                    <input type="text" id="task-title" required placeholder="เช่น วิชาคณิตศาสตร์ / ทบทวนบทเรียน" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">รูปแบบงาน</label>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">รูปแบบการแจ้งเตือน</label>
                         <select id="task-repeat" onchange="toggleDateInput()" class="w-full px-3 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
                             <option value="daily">🔄 ทำซ้ำทุกวัน</option>
                             <option value="weekdays">💼 จันทร์ - ศุกร์</option>
-                            <option value="monthly">🗓️ ทุกเดือน (ตามวันที่กำหนด)</option>
-                            <option value="once">📅 ทำครั้งเดียว</option>
+                            <option value="monthly">🗓️ ทุกเดือน</option>
+                            <option value="once">📅 ครั้งเดียว</option>
                         </select>
                     </div>
                     <div>
@@ -176,8 +173,33 @@
                 </div>
 
                 <div id="date-container" class="hidden">
-                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">วันที่กำหนดส่ง / วันที่ทำซ้ำประจำเดือน</label>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">วันที่กำหนดส่ง / วันที่ประจำเดือน</label>
                     <input type="date" id="task-date" class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
+                </div>
+
+                <!-- Note Section -->
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">บันทึกโน้ต / รายละเอียดเพิ่มเติม</label>
+                    <textarea id="task-note" rows="3" placeholder="เพิ่มรายละเอียดเกี่ยวกับการเรียน หรือโน้ตเตือนความจำ..." class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+
+                <!-- Image Upload Section -->
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">แนบรูปภาพ (เช่น รูปตารางเรียน)</label>
+                    <div class="flex items-center gap-3">
+                        <label class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl text-xs font-semibold text-slate-600 dark:text-slate-300 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700/50 transition">
+                            <i class="fas fa-image text-blue-500 text-sm"></i>
+                            <span id="img-upload-text">เลือกรูปภาพ...</span>
+                            <input type="file" id="task-img-input" accept="image/*" onchange="handleImageUpload(event)" class="hidden">
+                        </label>
+                        <button type="button" id="btn-remove-img" onclick="removeImage()" class="hidden w-11 h-11 bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 rounded-2xl flex items-center justify-center shrink-0">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
+                    </div>
+                    <!-- Image Preview -->
+                    <div id="img-preview-container" class="mt-3 hidden">
+                        <img id="img-preview" src="" alt="Preview" class="w-full max-h-40 object-cover rounded-2xl border border-slate-200 dark:border-slate-700">
+                    </div>
                 </div>
 
                 <div class="pt-2 flex gap-3">
@@ -185,6 +207,14 @@
                     <button type="submit" class="flex-1 py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-sm shadow-lg shadow-blue-500/25 active:scale-95 transition">บันทึกงาน</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal (ขยายรูปภาพขนาดเต็ม) -->
+    <div id="image-viewer-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden items-center justify-center p-4 z-50" onclick="closeImageViewer()">
+        <div class="relative max-w-lg w-full">
+            <img id="full-image" src="" class="w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl">
+            <p class="text-center text-white text-xs mt-3 opacity-80">แตะตรงไหนก็ได้เพื่อปิด</p>
         </div>
     </div>
 
@@ -199,6 +229,46 @@
                     .then(reg => { swRegistration = reg; })
                     .catch(err => console.error('SW Error:', err));
             });
+        }
+
+        // Handle Image Upload & Convert to Base64
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 3 * 1024 * 1024) {
+                    alert('ขนาดรูปภาพใหญ่เกินไป กรุณาเลือกรูปที่มีขนาดไม่เกิน 3MB');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const base64 = evt.target.result;
+                    document.getElementById('task-img-base64').value = base64;
+                    document.getElementById('img-preview').src = base64;
+                    document.getElementById('img-preview-container').classList.remove('hidden');
+                    document.getElementById('btn-remove-img').classList.remove('hidden');
+                    document.getElementById('img-upload-text').innerText = 'เปลี่ยนรูปภาพ...';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removeImage() {
+            document.getElementById('task-img-base64').value = '';
+            document.getElementById('task-img-input').value = '';
+            document.getElementById('img-preview-container').classList.add('hidden');
+            document.getElementById('btn-remove-img').classList.add('hidden');
+            document.getElementById('img-upload-text').innerText = 'เลือกรูปภาพ...';
+        }
+
+        function openImageViewer(src) {
+            document.getElementById('full-image').src = src;
+            document.getElementById('image-viewer-modal').classList.remove('hidden');
+            document.getElementById('image-viewer-modal').classList.add('flex');
+        }
+
+        function closeImageViewer() {
+            document.getElementById('image-viewer-modal').classList.add('hidden');
+            document.getElementById('image-viewer-modal').classList.remove('flex');
         }
 
         function setFilter(type, val) {
@@ -242,7 +312,7 @@
             }
             alert("กำลังนับถอยหลัง 5 วินาที... โปรดกดล็อคหน้าจอมือถือทันทีเพื่อทดสอบ!");
             setTimeout(() => {
-                sendNotificationNow("🔔 แจ้งเตือนทดสอบสำเร็จ!", "ป๊อปอัพเด้งเข้า Notification Center ตอนล็อกหน้าจอเรียบร้อยแล้วครับ");
+                sendNotificationNow("🔔 แจ้งเตือนทดสอบสำเร็จ!", "ป๊อปอัพเด้งเข้า Notification Center เรียบร้อยแล้วครับ");
             }, 5000);
         }
 
@@ -264,14 +334,14 @@
 
         function toggleDateInput() {
             const repeat = document.getElementById('task-repeat').value;
-            // แสดงช่องเลือกวันที่ทั้งแบบ 'once' และแบบ 'monthly'
             document.getElementById('date-container').classList.toggle('hidden', repeat === 'daily' || repeat === 'weekdays');
         }
 
         function openModal(taskId = null) {
             document.getElementById('task-form').reset();
             document.getElementById('task-id').value = '';
-            document.getElementById('modal-title').innerText = 'เพิ่มงานใหม่';
+            removeImage();
+            document.getElementById('modal-title').innerText = 'เพิ่มงาน / ตารางเรียน';
             toggleDateInput();
 
             if (taskId) {
@@ -279,11 +349,20 @@
                 if (task) {
                     document.getElementById('task-id').value = task.id;
                     document.getElementById('task-title').value = task.title;
-                    document.getElementById('task-link').value = task.link || '';
                     document.getElementById('task-repeat').value = task.repeat || 'once';
                     document.getElementById('task-time').value = task.time;
                     document.getElementById('task-date').value = task.date || '';
-                    document.getElementById('modal-title').innerText = 'แก้ไขงาน';
+                    document.getElementById('task-note').value = task.note || '';
+                    
+                    if (task.image) {
+                        document.getElementById('task-img-base64').value = task.image;
+                        document.getElementById('img-preview').src = task.image;
+                        document.getElementById('img-preview-container').classList.remove('hidden');
+                        document.getElementById('btn-remove-img').classList.remove('hidden');
+                        document.getElementById('img-upload-text').innerText = 'เปลี่ยนรูปภาพ...';
+                    }
+
+                    document.getElementById('modal-title').innerText = 'แก้ไขรายการ';
                     toggleDateInput();
                 }
             }
@@ -301,9 +380,10 @@
             e.preventDefault();
             const id = document.getElementById('task-id').value || Date.now().toString();
             const title = document.getElementById('task-title').value;
-            const link = document.getElementById('task-link').value;
             const repeat = document.getElementById('task-repeat').value;
             const time = document.getElementById('task-time').value;
+            const note = document.getElementById('task-note').value;
+            const image = document.getElementById('task-img-base64').value;
             let date = document.getElementById('task-date').value;
 
             if (repeat === 'daily' || repeat === 'weekdays') {
@@ -311,7 +391,7 @@
             }
 
             const existingIndex = tasks.findIndex(t => t.id === id);
-            const taskData = { id, title, link, repeat, time, date, completed: false, notified: false };
+            const taskData = { id, title, repeat, time, date, note, image, completed: false, notified: false };
 
             if (existingIndex > -1) {
                 tasks[existingIndex] = { ...tasks[existingIndex], ...taskData };
@@ -333,13 +413,11 @@
                     now.setDate(now.getDate() + 1);
                     task.date = now.toISOString().split('T')[0];
                 } else if (task.repeat === 'weekdays') {
-                    // ถ้าทำวันศุกร์ ขยับไปวันจันทร์
                     const day = now.getDay();
                     const addDays = (day === 5) ? 3 : (day === 6) ? 2 : 1;
                     now.setDate(now.getDate() + addDays);
                     task.date = now.toISOString().split('T')[0];
                 } else if (task.repeat === 'monthly') {
-                    // ขยับไปเดือนถัดไป วันเดิม
                     now.setMonth(now.getMonth() + 1);
                     task.date = now.toISOString().split('T')[0];
                 } else {
@@ -378,9 +456,10 @@
             const search = document.getElementById('search-input').value.toLowerCase();
 
             const filtered = tasks.filter(t => {
-                const matchSearch = t.title.toLowerCase().includes(search);
+                const matchTitle = t.title.toLowerCase().includes(search);
+                const matchNote = t.note ? t.note.toLowerCase().includes(search) : false;
                 const matchRepeat = activeRepeatFilter === 'all' || t.repeat === activeRepeatFilter;
-                return matchSearch && matchRepeat;
+                return (matchTitle || matchNote) && matchRepeat;
             });
 
             document.getElementById('stat-total').innerText = tasks.length;
@@ -403,27 +482,40 @@
             }
 
             listEl.innerHTML = filtered.map(t => `
-                <div class="p-4 flex items-center justify-between active:bg-slate-50 dark:active:bg-slate-800/50 transition">
-                    <div class="flex items-start space-x-3 min-w-0 pr-2">
-                        <button onclick="toggleComplete('${t.id}')" class="mt-0.5 text-slate-300 dark:text-slate-700 hover:text-emerald-500 transition shrink-0">
-                            <i class="fas ${t.completed ? 'fa-check-circle text-emerald-500' : 'fa-circle'} text-xl"></i>
-                        </button>
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-1.5 flex-wrap">
-                                <h4 class="font-bold text-slate-800 dark:text-white text-sm truncate ${t.completed ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${t.title}</h4>
-                                ${getRepeatBadge(t.repeat)}
-                            </div>
-                            <div class="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
-                                <span class="font-semibold text-slate-600 dark:text-slate-400"><i class="far fa-clock text-amber-500 mr-1"></i>${t.time} น.</span>
-                                ${(t.repeat === 'once' || t.repeat === 'monthly') ? `<span><i class="far fa-calendar text-blue-500 mr-1"></i>${t.date}</span>` : ''}
-                                ${t.link ? `<a href="${t.link}" target="_blank" class="text-blue-600 dark:text-blue-400 font-bold underline flex items-center gap-1"><i class="fas fa-external-link-alt text-[9px]"></i>เปิดระบบ</a>` : ''}
+                <div class="p-4 flex flex-col space-y-2 active:bg-slate-50 dark:active:bg-slate-800/50 transition">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-start space-x-3 min-w-0 pr-2">
+                            <button onclick="toggleComplete('${t.id}')" class="mt-0.5 text-slate-300 dark:text-slate-700 hover:text-emerald-500 transition shrink-0">
+                                <i class="fas ${t.completed ? 'fa-check-circle text-emerald-500' : 'fa-circle'} text-xl"></i>
+                            </button>
+                            <div class="min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <h4 class="font-bold text-slate-800 dark:text-white text-sm truncate ${t.completed ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${t.title}</h4>
+                                    ${getRepeatBadge(t.repeat)}
+                                </div>
+                                <div class="flex items-center gap-3 mt-1 text-[11px] text-slate-400 dark:text-slate-500">
+                                    <span class="font-semibold text-slate-600 dark:text-slate-400"><i class="far fa-clock text-amber-500 mr-1"></i>${t.time} น.</span>
+                                    ${(t.repeat === 'once' || t.repeat === 'monthly') ? `<span><i class="far fa-calendar text-blue-500 mr-1"></i>${t.date}</span>` : ''}
+                                </div>
                             </div>
                         </div>
+                        <div class="flex items-center space-x-1 shrink-0">
+                            <button onclick="openModal('${t.id}')" class="w-8 h-8 rounded-xl text-slate-400 hover:text-blue-600 flex items-center justify-center"><i class="fas fa-pen text-xs"></i></button>
+                            <button onclick="deleteTask('${t.id}')" class="w-8 h-8 rounded-xl text-slate-400 hover:text-rose-600 flex items-center justify-center"><i class="fas fa-trash-alt text-xs"></i></button>
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-1 shrink-0">
-                        <button onclick="openModal('${t.id}')" class="w-8 h-8 rounded-xl text-slate-400 hover:text-blue-600 flex items-center justify-center"><i class="fas fa-pen text-xs"></i></button>
-                        <button onclick="deleteTask('${t.id}')" class="w-8 h-8 rounded-xl text-slate-400 hover:text-rose-600 flex items-center justify-center"><i class="fas fa-trash-alt text-xs"></i></button>
-                    </div>
+
+                    ${t.note ? `
+                        <div class="ml-8 bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/80 text-xs text-slate-600 dark:text-slate-300">
+                            <i class="fas fa-sticky-note text-amber-500 mr-1.5"></i>${t.note}
+                        </div>
+                    ` : ''}
+
+                    ${t.image ? `
+                        <div class="ml-8 mt-1">
+                            <img src="${t.image}" onclick="openImageViewer('${t.image}')" class="w-full max-h-36 object-cover rounded-xl border border-slate-200 dark:border-slate-700 cursor-pointer hover:opacity-90 transition" title="กดเพื่อดูรูปขยายใหญ่">
+                        </div>
+                    ` : ''}
                 </div>
             `).join('');
         }
@@ -432,7 +524,7 @@
             const now = new Date();
             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             const currentDate = now.toISOString().split('T')[0];
-            const currentDay = now.getDay(); // 0 = Sun, 1-5 = Mon-Fri, 6 = Sat
+            const currentDay = now.getDay();
 
             tasks.forEach(task => {
                 if (!task.completed && task.time === currentTime && !task.notified) {
@@ -451,7 +543,7 @@
                     }
 
                     if (shouldNotify) {
-                        sendNotificationNow(`🔔 ถึงเวลาทำงาน: ${task.title}`, `กำหนดเวลา ${task.time} น.`);
+                        sendNotificationNow(`🔔 ถึงเวลา: ${task.title}`, task.note || `กำหนดเวลา ${task.time} น.`);
                         task.notified = true;
                         localStorage.setItem('my_tasks', JSON.stringify(tasks));
                     }
