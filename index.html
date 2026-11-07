@@ -89,6 +89,10 @@
 
             <!-- Actions Header -->
             <div class="flex items-center space-x-3">
+                <button onclick="openLineModal()" class="p-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-medium shadow-md shadow-emerald-500/20 flex items-center space-x-2 transition active:scale-95" title="ตั้งค่า LINE Notification">
+                    <i class="fa-brands fa-line text-xl"></i>
+                    <span class="hidden sm:inline text-sm">ตั้งค่า LINE</span>
+                </button>
                 <button onclick="openModal()" class="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium shadow-md shadow-blue-500/20 flex items-center justify-center space-x-2 transition active:scale-95">
                     <i class="fa-solid fa-plus"></i>
                     <span>เพิ่มงานใหม่</span>
@@ -270,10 +274,67 @@
                     <textarea id="taskDescription" rows="3" placeholder="ระบุรายละเอียดงาน..." class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
 
+                <!-- Send to Line Checkbox -->
+                <div class="flex items-center space-x-2 pt-1">
+                    <input type="checkbox" id="sendLineOnCreate" class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
+                    <label for="sendLineOnCreate" class="text-xs font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <i class="fa-brands fa-line text-emerald-500 text-sm mr-1.5"></i> ส่งการแจ้งเตือนสร้างงานใหม่เข้า LINE ทันที
+                    </label>
+                </div>
+
                 <!-- Form Action Buttons -->
                 <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                     <button type="button" onclick="closeModal()" class="px-4 py-2.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition">ยกเลิก</button>
                     <button type="submit" class="px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 shadow-md shadow-blue-500/20 transition">บันทึกงาน</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LINE Settings Modal -->
+    <div id="lineModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 dark:border-gray-700 my-8">
+            <div class="flex justify-between items-center pb-4 border-b border-gray-100 dark:border-gray-700">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-brands fa-line text-emerald-500 text-2xl"></i>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">ตั้งค่าแจ้งเตือนผ่าน LINE</h3>
+                </div>
+                <button onclick="closeLineModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="lineConfigForm" onsubmit="saveLineConfig(event)" class="space-y-4 mt-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider mb-1">LINE Webhook URL / Endpoint <span class="text-red-500">*</span></label>
+                    <input type="url" id="lineWebhookUrl" placeholder="https://hook.eu1.make.com/your-webhook-id" class="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1.5 leading-relaxed">
+                        รองรับ **Make.com / n8n / Zapier Webhook** หรือ URL API ที่ส่งข้อมูลเข้า LINE Notify / LINE Messaging API
+                    </p>
+                </div>
+
+                <div class="flex items-center space-x-2 pt-2">
+                    <input type="checkbox" id="lineEnabled" class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500">
+                    <label for="lineEnabled" class="text-sm font-medium text-gray-800 dark:text-gray-200">
+                        เปิดใช้งานการส่งแจ้งเตือนเข้า LINE เมื่อถึงเวลาเตือน
+                    </label>
+                </div>
+
+                <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-3.5 rounded-xl text-xs text-emerald-800 dark:text-emerald-300 space-y-1">
+                    <p class="font-semibold"><i class="fa-solid fa-circle-info mr-1"></i> คำแนะนำการเชื่อมต่อ:</p>
+                    <p>สามารถสร้าง Webhook รับข้อความง่ายๆ ฟรี ผ่าน Make.com หรือ n8n เพื่อยิงเข้า LINE Official Account ของคุณได้เลยครับ</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <button type="button" onclick="testLineNotification()" class="px-3.5 py-2 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 rounded-xl text-xs font-semibold hover:bg-emerald-200 transition flex items-center space-x-1.5">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>ทดสอบส่ง LINE</span>
+                    </button>
+                    <div class="flex space-x-2">
+                        <button type="button" onclick="closeLineModal()" class="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition">ยกเลิก</button>
+                        <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-xl text-sm font-medium hover:bg-emerald-700 shadow-md shadow-emerald-500/20 transition">บันทึกการตั้งค่า</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -286,6 +347,7 @@
     <script>
         // Data State
         let tasks = JSON.parse(localStorage.getItem('app_tasks')) || [];
+        let lineConfig = JSON.parse(localStorage.getItem('app_line_config')) || { url: '', enabled: false };
         let currentTab = 'daily'; // 'daily' or 'assigned'
         let triggeredNotifs = new Set(); // To prevent duplicate alerts
 
@@ -295,6 +357,7 @@
             checkNotificationPermission();
             setTodayDefaultDate();
             renderTasks();
+            loadLineConfig();
             
             // Notification Scheduler Interval (Check every 10 seconds)
             setInterval(checkUpcomingTasksAndNotify, 10000);
@@ -368,88 +431,88 @@
                     if (!triggeredNotifs.has(task.id)) {
                         triggeredNotifs.add(task.id);
                         sendBrowserNotification(task);
+                        
+                        // Send LINE Notification if enabled
+                        if (lineConfig.enabled && lineConfig.url) {
+                            sendLineTaskNotification(task, "⏰ แจ้งเตือนถึงเวลาทำภารกิจ!");
+                        }
+
                         showToast(`⏰ ถึงเวลาทำงาน: ${task.title}`, "info");
                     }
                 }
             });
         }
 
-        function sendBrowserNotification(task) {
-            if ("Notification" in window && Notification.permission === "granted") {
-                const icon = task.category === 'daily' ? '📅' : '👤';
-                new Notification(`${icon} กำหนดส่งงาน: ${task.title}`, {
-                    body: `ความสำคัญ: ${getPriorityText(task.priority)} | เวลา: ${task.dueTime} น.\n${task.description || ''}`,
-                    icon: "https://cdn-icons-png.flaticon.com/512/3602/3602145.png"
+        // LINE Integration Logic
+        function openLineModal() {
+            document.getElementById('lineModal').classList.remove('hidden');
+        }
+
+        function closeLineModal() {
+            document.getElementById('lineModal').classList.add('hidden');
+        }
+
+        function loadLineConfig() {
+            document.getElementById('lineWebhookUrl').value = lineConfig.url || '';
+            document.getElementById('lineEnabled').checked = !!lineConfig.enabled;
+        }
+
+        function saveLineConfig(e) {
+            e.preventDefault();
+            const url = document.getElementById('lineWebhookUrl').value.trim();
+            const enabled = document.getElementById('lineEnabled').checked;
+
+            lineConfig = { url, enabled };
+            localStorage.setItem('app_line_config', JSON.stringify(lineConfig));
+            showToast("บันทึกการตั้งค่า LINE สำเร็จ", "success");
+            closeLineModal();
+        }
+
+        async function sendLineTaskNotification(task, customHeader = "📌 แจ้งเตือนงานใหม่") {
+            if (!lineConfig.url) return;
+
+            const message = `${customHeader}\n` +
+                            `--------------------\n` +
+                            `📌 หัวข้อ: ${task.title}\n` +
+                            `📂 หมวดหมู่: ${task.category === 'daily' ? 'งานประจำวัน' : 'งานที่ได้รับมอบหมาย'}\n` +
+                            `🚨 ความสำคัญ: ${getPriorityText(task.priority)}\n` +
+                            `📅 กำหนดส่ง: ${formatThaiDate(task.dueDate)} เวลา ${task.dueTime} น.\n` +
+                            (task.assignee ? `👤 ผู้รับผิดชอบ: ${task.assignee}\n` : '') +
+                            (task.description ? `📝 รายละเอียด: ${task.description}` : '');
+
+            try {
+                await fetch(lineConfig.url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors',
+                    body: JSON.stringify({ message: message, task: task })
                 });
+            } catch (err) {
+                console.error("Failed to send LINE notification", err);
             }
         }
 
-        // Tab Switching
-        function switchCategoryTab(category) {
-            currentTab = category;
-            const tabDaily = document.getElementById('tabDaily');
-            const tabAssigned = document.getElementById('tabAssigned');
-
-            if (category === 'daily') {
-                tabDaily.className = "pb-3 px-4 font-semibold text-sm border-b-2 border-blue-600 text-blue-600 dark:text-blue-400 flex items-center space-x-2";
-                tabAssigned.className = "pb-3 px-4 font-semibold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center space-x-2";
-            } else {
-                tabAssigned.className = "pb-3 px-4 font-semibold text-sm border-b-2 border-blue-600 text-blue-600 dark:text-blue-400 flex items-center space-x-2";
-                tabDaily.className = "pb-3 px-4 font-semibold text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center space-x-2";
+        async function testLineNotification() {
+            const url = document.getElementById('lineWebhookUrl').value.trim();
+            if (!url) {
+                showToast("กรุณากรอก Webhook URL ก่อนทดสอบ", "warning");
+                return;
             }
-            renderTasks();
-        }
 
-        // Form Modal Control
-        function openModal(taskId = null) {
-            const modal = document.getElementById('taskModal');
-            const form = document.getElementById('taskForm');
-            modal.classList.remove('hidden');
-
-            if (taskId) {
-                // Edit Mode
-                const task = tasks.find(t => t.id === taskId);
-                if (task) {
-                    document.getElementById('modalTitle').textContent = 'แก้ไขงาน';
-                    document.getElementById('taskId').value = task.id;
-                    document.getElementById('taskTitle').value = task.title;
-                    document.getElementById('taskCategory').value = task.category;
-                    document.getElementById('taskPriority').value = task.priority;
-                    document.getElementById('taskAssignee').value = task.assignee || '';
-                    document.getElementById('taskDueDate').value = task.dueDate;
-                    document.getElementById('taskDueTime').value = task.dueTime;
-                    document.getElementById('taskDescription').value = task.description || '';
-                    toggleAssigneeInput();
-                }
-            } else {
-                // Add Mode
-                document.getElementById('modalTitle').textContent = 'เพิ่มงานใหม่';
-                form.reset();
-                document.getElementById('taskId').value = '';
-                document.getElementById('taskCategory').value = currentTab;
-                setTodayDefaultDate();
-                toggleAssigneeInput();
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors',
+                    body: JSON.stringify({ 
+                        message: "🔔 ทดสอบการเชื่อมต่อระบบแจ้งเตือน LINE สำเร็จแล้ว!",
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                showToast("ส่งข้อความทดสอบไปยัง Webhook แล้ว", "success");
+            } catch (err) {
+                showToast("เกิดข้อผิดพลาดในการส่งข้อความ", "error");
             }
-        }
-
-        function closeModal() {
-            document.getElementById('taskModal').classList.add('hidden');
-        }
-
-        function toggleAssigneeInput() {
-            const cat = document.getElementById('taskCategory').value;
-            const container = document.getElementById('assigneeContainer');
-            if (cat === 'assigned') {
-                container.classList.remove('hidden');
-            } else {
-                container.classList.add('hidden');
-            }
-        }
-
-        function setTodayDefaultDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('taskDueDate').value = today;
-            document.getElementById('taskDueTime').value = "09:00";
         }
 
         // Save Task Handler (Add/Edit)
@@ -463,6 +526,7 @@
             const dueDate = document.getElementById('taskDueDate').value;
             const dueTime = document.getElementById('taskDueTime').value;
             const description = document.getElementById('taskDescription').value.trim();
+            const sendLine = document.getElementById('sendLineOnCreate').checked;
 
             if (!title || !dueDate || !dueTime) return;
 
@@ -493,6 +557,11 @@
                 };
                 tasks.push(newTask);
                 showToast("สร้างงานใหม่เรียบร้อยแล้ว", "success");
+
+                // Send immediate LINE notification if checked
+                if (sendLine && lineConfig.url) {
+                    sendLineTaskNotification(newTask, "➕ บันทึกงานใหม่ลงระบบแล้ว");
+                }
             }
 
             saveToLocalStorage();
