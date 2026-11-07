@@ -4,108 +4,106 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบจัดการงานและแจ้งเตือน</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eff6ff',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                        }
-                    }
-                }
-            }
         }
     </script>
+    <!-- FontAwesome & Google Fonts -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Sarabun', sans-serif; }
+        .glass-card {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen pb-12 transition-colors duration-300">
+<body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen pb-12 transition-colors duration-300">
 
     <!-- Notification Alert Banner -->
-    <div id="notif-banner" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-3 text-sm font-medium hidden flex justify-between items-center shadow-lg">
+    <div id="notif-banner" class="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white px-4 py-3 text-sm font-medium hidden flex justify-between items-center shadow-lg">
         <div class="flex items-center space-x-3">
-            <div class="bg-white/20 p-2 rounded-lg">
-                <i class="fas fa-bell text-white animate-bounce"></i>
+            <div class="bg-white/20 p-2 rounded-xl">
+                <i class="fas fa-bell text-white text-lg animate-bounce"></i>
             </div>
             <span>เปิดใช้งานการแจ้งเตือนบนเบราว์เซอร์ เพื่อไม่ให้พลาดกำหนดส่งงานสำคัญ!</span>
         </div>
         <div class="flex items-center space-x-2">
-            <button onclick="requestNotificationPermission()" class="bg-white text-amber-700 px-4 py-1.5 rounded-xl text-xs font-bold hover:bg-amber-50 shadow-sm transition">เปิดการแจ้งเตือน</button>
-            <button onclick="closeBanner()" class="text-white/80 hover:text-white p-1"><i class="fas fa-times"></i></button>
+            <button onclick="requestNotificationPermission()" class="bg-white text-amber-700 px-4 py-1.5 rounded-xl text-xs font-bold hover:bg-amber-50 shadow-md transition">เปิดการแจ้งเตือน</button>
+            <button onclick="closeBanner()" class="text-white/80 hover:text-white p-1"><i class="fas fa-times text-lg"></i></button>
         </div>
     </div>
 
     <div class="max-w-5xl mx-auto px-4 py-8">
         <!-- Top Bar / Header -->
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60 transition-colors">
+        <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 bg-white/80 dark:bg-slate-900/80 p-6 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/60 dark:border-slate-800 glass-card transition-all">
             <div class="flex items-center space-x-4">
                 <div class="w-14 h-14 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-                    <i class="fas fa-check-double text-2xl"></i>
+                    <i class="fas fa-calendar-check text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">ระบบจัดการงานและแจ้งเตือน</h1>
+                    <h1 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
+                        <span>ระบบจัดการงานและแจ้งเตือน</span>
+                        <span class="text-xs px-2.5 py-1 bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-300 rounded-full font-semibold">Pro</span>
+                    </h1>
                     <p class="text-sm text-slate-500 dark:text-slate-400">วางแผนงานประจำวัน และติดตามงานที่ได้รับมอบหมาย</p>
                 </div>
             </div>
             <div class="flex items-center space-x-3">
                 <!-- Theme Switcher Button -->
-                <button onclick="toggleTheme()" class="w-11 h-11 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/60 flex items-center justify-center transition" title="สลับโหมดมืด/สว่าง">
-                    <i id="theme-icon" class="fas fa-moon text-lg"></i>
+                <button onclick="toggleTheme()" id="theme-btn" class="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition font-medium text-sm shadow-sm">
+                    <i id="theme-icon" class="fas fa-moon text-indigo-500"></i>
+                    <span id="theme-text">โหมดมืด</span>
                 </button>
                 
-                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-3 rounded-2xl shadow-lg shadow-blue-500/25 transition flex items-center space-x-2">
-                    <i class="fas fa-plus"></i>
+                <button onclick="openModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold px-5 py-2.5 rounded-2xl shadow-lg shadow-blue-500/25 transition flex items-center space-x-2">
+                    <i class="fas fa-plus-circle text-lg"></i>
                     <span>เพิ่มงานใหม่</span>
                 </button>
             </div>
         </header>
 
-        <!-- Stats Dashboard -->
+        <!-- Stats Dashboard Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-100 dark:border-slate-700/60 shadow-sm">
-                <div class="flex items-center justify-between text-slate-400 mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider">งานทั้งหมด</span>
-                    <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300">
-                        <i class="fas fa-layer-group"></i>
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-lg shadow-slate-100 dark:shadow-none transition">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">งานทั้งหมด</span>
+                    <div class="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                        <i class="fas fa-tasks text-lg"></i>
                     </div>
                 </div>
                 <div class="text-3xl font-extrabold text-slate-800 dark:text-white" id="stat-total">0</div>
             </div>
 
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-100 dark:border-slate-700/60 shadow-sm">
-                <div class="flex items-center justify-between text-amber-500 mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider">รอดำเนินการ</span>
-                    <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-500">
-                        <i class="fas fa-hourglass-half"></i>
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-lg shadow-slate-100 dark:shadow-none transition">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-500">รอดำเนินการ</span>
+                    <div class="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/50 flex items-center justify-center text-amber-500">
+                        <i class="fas fa-hourglass-half text-lg animate-spin" style="animation-duration: 8s;"></i>
                     </div>
                 </div>
                 <div class="text-3xl font-extrabold text-slate-800 dark:text-white" id="stat-pending">0</div>
             </div>
 
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-100 dark:border-slate-700/60 shadow-sm">
-                <div class="flex items-center justify-between text-emerald-500 mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider">เสร็จสิ้นแล้ว</span>
-                    <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-500">
-                        <i class="fas fa-check-circle"></i>
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-lg shadow-slate-100 dark:shadow-none transition">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">เสร็จสิ้นแล้ว</span>
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-500">
+                        <i class="fas fa-check-circle text-lg"></i>
                     </div>
                 </div>
                 <div class="text-3xl font-extrabold text-slate-800 dark:text-white" id="stat-completed">0</div>
             </div>
 
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-3xl border border-slate-100 dark:border-slate-700/60 shadow-sm">
-                <div class="flex items-center justify-between text-rose-500 mb-3">
-                    <span class="text-xs font-bold uppercase tracking-wider">เกินกำหนด</span>
-                    <div class="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 flex items-center justify-center text-rose-500">
-                        <i class="fas fa-exclamation-triangle"></i>
+            <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200/60 dark:border-slate-800 shadow-lg shadow-slate-100 dark:shadow-none transition">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-rose-500">เกินกำหนด</span>
+                    <div class="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/50 flex items-center justify-center text-rose-500">
+                        <i class="fas fa-exclamation-triangle text-lg"></i>
                     </div>
                 </div>
                 <div class="text-3xl font-extrabold text-slate-800 dark:text-white" id="stat-overdue">0</div>
@@ -113,40 +111,43 @@
         </div>
 
         <!-- Task List Area -->
-        <main class="bg-white dark:bg-slate-800 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700/60 overflow-hidden">
+        <main class="bg-white dark:bg-slate-900 rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/60 dark:border-slate-800 overflow-hidden transition">
             <!-- Filter Bar -->
-            <div class="p-4 md:p-6 border-b border-slate-100 dark:border-slate-700/60 bg-slate-50/50 dark:bg-slate-800/50 flex flex-col md:flex-row gap-3">
+            <div class="p-4 md:p-6 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 flex flex-col md:flex-row gap-3">
                 <div class="relative flex-1">
                     <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
-                    <input type="text" id="search-input" oninput="renderTasks()" placeholder="ค้นหารายการงาน..." class="w-full pl-11 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    <input type="text" id="search-input" oninput="renderTasks()" placeholder="ค้นหารายการงาน..." class="w-full pl-11 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="flex gap-2">
-                    <select id="filter-repeat" onchange="renderTasks()" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 focus:outline-none">
-                        <option value="all">รูปแบบงานทั้งหมด</option>
+                    <select id="filter-repeat" onchange="renderTasks()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 focus:outline-none">
+                        <option value="all">🔄 รูปแบบงานทั้งหมด</option>
                         <option value="daily">🔄 ทำซ้ำทุกวัน</option>
                         <option value="once">📅 ทำครั้งเดียว</option>
                     </select>
-                    <select id="filter-status" onchange="renderTasks()" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 focus:outline-none">
-                        <option value="all">สถานะทั้งหมด</option>
-                        <option value="pending">รอดำเนินการ</option>
-                        <option value="completed">เสร็จสิ้น</option>
+                    <select id="filter-status" onchange="renderTasks()" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 focus:outline-none">
+                        <option value="all">📌 สถานะทั้งหมด</option>
+                        <option value="pending">⏳ รอดำเนินการ</option>
+                        <option value="completed">✅ เสร็จสิ้น</option>
                     </select>
                 </div>
             </div>
 
             <!-- Task Items Container -->
-            <div id="task-list" class="divide-y divide-slate-100 dark:divide-slate-700/60">
+            <div id="task-list" class="divide-y divide-slate-100 dark:divide-slate-800">
                 <!-- Task items rendered here -->
             </div>
         </main>
     </div>
 
     <!-- Modal Form -->
-    <div id="task-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-700">
+    <div id="task-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-md hidden items-center justify-center p-4 z-50">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-800 transition">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-800 dark:text-white" id="modal-title">เพิ่มงานใหม่</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700"><i class="fas fa-times"></i></button>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2" id="modal-title">
+                    <i class="fas fa-edit text-blue-600"></i>
+                    <span>เพิ่มงานใหม่</span>
+                </h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 w-8 h-8 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"><i class="fas fa-times text-lg"></i></button>
             </div>
 
             <form id="task-form" onsubmit="saveTask(event)">
@@ -154,43 +155,55 @@
                 
                 <div class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">ชื่อชื่องาน / รายการที่ต้องทำ</label>
-                        <input type="text" id="task-title" required placeholder="เช่น บันทึกสวัสดิการ แบบ 7105" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fas fa-pen text-blue-500"></i> ชื่อชื่องาน / รายการที่ต้องทำ
+                        </label>
+                        <input type="text" id="task-title" required placeholder="เช่น บันทึกสวัสดิการ แบบ 7105" class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">ลิงก์ระบบงาน (เช่น แบบ 7105)</label>
-                        <input type="url" id="task-link" placeholder="https://..." class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fas fa-link text-indigo-500"></i> ลิงก์ระบบงาน (ถ้ามี เช่น แบบ 7105)
+                        </label>
+                        <input type="url" id="task-link" placeholder="https://..." class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">รูปแบบการทำซ้ำ</label>
-                            <select id="task-repeat" onchange="toggleDateInput()" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fas fa-sync-alt text-purple-500"></i> รูปแบบงาน
+                            </label>
+                            <select id="task-repeat" onchange="toggleDateInput()" class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
                                 <option value="daily">🔄 ทำซ้ำทุกวัน (Daily)</option>
                                 <option value="once">📅 ทำครั้งเดียว (Specific Date)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">เวลาแจ้งเตือน</label>
-                            <input type="time" id="task-time" required class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                <i class="fas fa-clock text-amber-500"></i> เวลาแจ้งเตือน
+                            </label>
+                            <input type="time" id="task-time" required class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
                         </div>
                     </div>
 
                     <div id="date-container" class="hidden">
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">วันที่กำหนดส่ง</label>
-                        <input type="date" id="task-date" class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fas fa-calendar-alt text-rose-500"></i> วันที่กำหนดส่ง
+                        </label>
+                        <input type="date" id="task-date" class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">รายละเอียดเพิ่มเติม</label>
-                        <textarea id="task-desc" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติม..." class="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none"></textarea>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                            <i class="fas fa-align-left text-emerald-500"></i> รายละเอียดเพิ่มเติม
+                        </label>
+                        <textarea id="task-desc" rows="3" placeholder="ระบุรายละเอียดเพิ่มเติม..." class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm dark:text-white outline-none"></textarea>
                     </div>
                 </div>
 
                 <div class="mt-6 flex justify-end space-x-3">
-                    <button type="button" onclick="closeModal()" class="px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium text-sm hover:bg-slate-50 dark:hover:bg-slate-700">ยกเลิก</button>
-                    <button type="submit" class="px-6 py-3 rounded-2xl bg-blue-600 text-white font-medium text-sm hover:bg-blue-700 shadow-lg shadow-blue-500/25">บันทึกข้อมูล</button>
+                    <button type="button" onclick="closeModal()" class="px-5 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium text-sm hover:bg-slate-100 dark:hover:bg-slate-800 transition">ยกเลิก</button>
+                    <button type="submit" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold text-sm hover:from-blue-700 hover:to-indigo-700 shadow-lg shadow-blue-500/25 transition">บันทึกข้อมูล</button>
                 </div>
             </form>
         </div>
@@ -199,26 +212,36 @@
     <script>
         let tasks = JSON.parse(localStorage.getItem('my_tasks') || '[]');
 
-        function initTheme() {
-            const savedTheme = localStorage.getItem('app_theme') || 'light';
-            if (savedTheme === 'dark') {
-                document.documentElement.classList.add('dark');
-                document.getElementById('theme-icon').className = 'fas fa-sun text-amber-400 text-lg';
+        // Theme Switcher Fix
+        function applyTheme(isDark) {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            
+            if (isDark) {
+                html.classList.add('dark');
+                icon.className = 'fas fa-sun text-amber-400';
+                text.innerText = 'โหมดสว่าง';
+                localStorage.setItem('app_theme', 'dark');
             } else {
-                document.documentElement.classList.remove('dark');
-                document.getElementById('theme-icon').className = 'fas fa-moon text-slate-600 dark:text-slate-300 text-lg';
+                html.classList.remove('dark');
+                icon.className = 'fas fa-moon text-indigo-500';
+                text.innerText = 'โหมดมืด';
+                localStorage.setItem('app_theme', 'light');
             }
         }
 
         function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('app_theme', 'light');
-                document.getElementById('theme-icon').className = 'fas fa-moon text-slate-600 text-lg';
+            const isCurrentlyDark = document.documentElement.classList.contains('dark');
+            applyTheme(!isCurrentlyDark);
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('app_theme');
+            if (savedTheme === 'dark') {
+                applyTheme(true);
             } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('app_theme', 'dark');
-                document.getElementById('theme-icon').className = 'fas fa-sun text-amber-400 text-lg';
+                applyTheme(false);
             }
         }
 
@@ -325,7 +348,7 @@
                     task.date = tomorrow.toISOString().split('T')[0];
                     task.notified = false;
                     task.completed = false;
-                    alert("เก่งมาก! ทำงานประจำวันนี้เรียบร้อยแล้ว ระบบจะตั้งเตือนสำหรับวันพรุ่งนี้ให้อัตโนมัติครับ");
+                    alert("🎉 เก่งมาก! ทำงานประจำวันนี้เรียบร้อยแล้ว ระบบจะตั้งเตือนสำหรับวันพรุ่งนี้ให้อัตโนมัติครับ");
                 } else {
                     task.completed = !task.completed;
                 }
@@ -365,34 +388,38 @@
 
             const listEl = document.getElementById('task-list');
             if (filtered.length === 0) {
-                listEl.innerHTML = `<div class="p-12 text-center text-slate-400 font-medium">ไม่พบรายการงาน</div>`;
+                listEl.innerHTML = `<div class="p-12 text-center text-slate-400 font-medium">
+                    <i class="fas fa-clipboard-list text-4xl mb-3 text-slate-300 dark:text-slate-700"></i>
+                    <p>ไม่พบรายการงานที่คุณค้นหา</p>
+                </div>`;
                 return;
             }
 
             listEl.innerHTML = filtered.map(t => `
-                <div class="p-5 flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-slate-700/40 transition">
+                <div class="p-5 flex items-center justify-between hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition">
                     <div class="flex items-start space-x-4">
-                        <button onclick="toggleComplete('${t.id}')" class="mt-1 text-slate-300 dark:text-slate-600 hover:text-emerald-500 transition">
-                            <i class="fas ${t.completed ? 'fa-check-circle text-emerald-500' : 'fa-circle'} text-2xl"></i>
+                        <button onclick="toggleComplete('${t.id}')" class="mt-1 text-slate-300 dark:text-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition">
+                            <i class="fas ${t.completed ? 'fa-check-circle text-emerald-500 dark:text-emerald-400' : 'fa-circle'} text-2xl"></i>
                         </button>
                         <div>
                             <div class="flex items-center space-x-2">
-                                <h4 class="font-bold text-slate-800 dark:text-white ${t.completed ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${t.title}</h4>
-                                <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold ${t.repeat === 'daily' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300'}">
-                                    ${t.repeat === 'daily' ? '🔄 ทำซ้ำทุกวัน' : '📅 ครั้งเดียว'}
+                                <h4 class="font-bold text-slate-800 dark:text-white text-base ${t.completed ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${t.title}</h4>
+                                <span class="text-xs px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1 ${t.repeat === 'daily' ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300'}">
+                                    <i class="fas ${t.repeat === 'daily' ? 'fa-sync-alt' : 'fa-calendar'} text-[10px]"></i>
+                                    ${t.repeat === 'daily' ? 'ทำซ้ำทุกวัน' : 'ครั้งเดียว'}
                                 </span>
                             </div>
                             ${t.desc ? `<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">${t.desc}</p>` : ''}
-                            <div class="flex items-center space-x-4 mt-2.5 text-xs text-slate-400 dark:text-slate-500">
-                                <span class="flex items-center"><i class="far fa-clock mr-1.5"></i>${t.time} น.</span>
-                                ${t.repeat === 'once' ? `<span class="flex items-center"><i class="far fa-calendar mr-1.5"></i>${t.date}</span>` : ''}
-                                ${t.link ? `<a href="${t.link}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center font-medium"><i class="fas fa-external-link-alt mr-1.5"></i>เปิดระบบงาน</a>` : ''}
+                            <div class="flex flex-wrap items-center gap-4 mt-2.5 text-xs text-slate-400 dark:text-slate-500">
+                                <span class="flex items-center font-medium text-slate-600 dark:text-slate-400"><i class="far fa-clock mr-1.5 text-amber-500"></i>${t.time} น.</span>
+                                ${t.repeat === 'once' ? `<span class="flex items-center"><i class="far fa-calendar-alt mr-1.5 text-blue-500"></i>${t.date}</span>` : ''}
+                                ${t.link ? `<a href="${t.link}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:underline flex items-center font-semibold bg-blue-50 dark:bg-blue-950/40 px-2.5 py-1 rounded-lg"><i class="fas fa-external-link-alt mr-1.5"></i>เปิดระบบงาน</a>` : ''}
                             </div>
                         </div>
                     </div>
                     <div class="flex space-x-1">
-                        <button onclick="openModal('${t.id}')" class="w-9 h-9 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteTask('${t.id}')" class="w-9 h-9 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center transition"><i class="fas fa-trash-alt"></i></button>
+                        <button onclick="openModal('${t.id}')" class="w-9 h-9 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition" title="แก้ไข"><i class="fas fa-pen"></i></button>
+                        <button onclick="deleteTask('${t.id}')" class="w-9 h-9 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center transition" title="ลบ"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>
             `).join('');
